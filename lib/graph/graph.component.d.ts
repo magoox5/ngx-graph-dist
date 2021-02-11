@@ -48,6 +48,11 @@ export declare class GraphComponent extends BaseChartComponent implements OnInit
     panOnZoom: boolean;
     animate?: boolean;
     autoCenter: boolean;
+    /** Margin applied around the drawing area on zoom to fit */
+    zoomToFitMargin: {
+        x: number;
+        y: number;
+    };
     update$: Observable<any>;
     center$: Observable<any>;
     zoomToFit$: Observable<any>;

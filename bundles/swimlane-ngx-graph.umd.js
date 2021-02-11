@@ -1378,18 +1378,18 @@
          * @memberOf GraphComponent
          */
         GraphComponent.prototype.ngOnDestroy = function () {
-            var e_1, _a;
+            var e_1, _c;
             _super.prototype.ngOnDestroy.call(this);
             try {
-                for (var _b = __values(this.subscriptions), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var sub = _c.value;
+                for (var _d = __values(this.subscriptions), _e = _d.next(); !_e.done; _e = _d.next()) {
+                    var sub = _e.value;
                     sub.unsubscribe();
                 }
             }
             catch (e_1_1) { e_1 = { error: e_1_1 }; }
             finally {
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    if (_e && !_e.done && (_c = _d.return)) _c.call(_d);
                 }
                 finally { if (e_1) throw e_1.error; }
             }
@@ -1652,7 +1652,7 @@
             var _this = this;
             if (this.nodeElements && this.nodeElements.length) {
                 this.nodeElements.map(function (elem) {
-                    var e_2, _a;
+                    var e_2, _c;
                     var nativeElement = elem.nativeElement;
                     var node = _this.graph.nodes.find(function (n) { return n.id === nativeElement.id; });
                     if (!node) {
@@ -1694,8 +1694,8 @@
                             var maxTextDims = void 0;
                             try {
                                 try {
-                                    for (var _b = __values(nativeElement.getElementsByTagName('text')), _c = _b.next(); !_c.done; _c = _b.next()) {
-                                        var textElem = _c.value;
+                                    for (var _d = __values(nativeElement.getElementsByTagName('text')), _e = _d.next(); !_e.done; _e = _d.next()) {
+                                        var textElem = _e.value;
                                         var currentBBox = textElem.getBBox();
                                         if (!maxTextDims) {
                                             maxTextDims = currentBBox;
@@ -1713,7 +1713,7 @@
                                 catch (e_2_1) { e_2 = { error: e_2_1 }; }
                                 finally {
                                     try {
-                                        if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                                        if (_e && !_e.done && (_c = _d.return)) _c.call(_d);
                                     }
                                     finally { if (e_2) throw e_2.error; }
                                 }
@@ -1890,7 +1890,7 @@
          * @memberOf GraphComponent
          */
         GraphComponent.prototype.onDrag = function (event) {
-            var e_3, _a;
+            var e_3, _c;
             var _this = this;
             if (!this.draggingEnabled) {
                 return;
@@ -1922,15 +1922,15 @@
             };
             var this_2 = this;
             try {
-                for (var _b = __values(this.graph.edges), _c = _b.next(); !_c.done; _c = _b.next()) {
-                    var link = _c.value;
+                for (var _d = __values(this.graph.edges), _e = _d.next(); !_e.done; _e = _d.next()) {
+                    var link = _e.value;
                     _loop_2(link);
                 }
             }
             catch (e_3_1) { e_3 = { error: e_3_1 }; }
             finally {
                 try {
-                    if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+                    if (_e && !_e.done && (_c = _d.return)) _c.call(_d);
                 }
                 finally { if (e_3) throw e_3.error; }
             }
@@ -2147,8 +2147,14 @@
          * Zooms to fit the entier graph
          */
         GraphComponent.prototype.zoomToFit = function () {
-            var heightZoom = this.dims.height / this.graphDims.height;
-            var widthZoom = this.dims.width / this.graphDims.width;
+            var _a, _b;
+            var margin = {
+                x: ((_a = this.zoomToFitMargin) === null || _a === void 0 ? void 0 : _a.x) || 0,
+                y: ((_b = this.zoomToFitMargin) === null || _b === void 0 ? void 0 : _b.y) || 0,
+            };
+            // Margin value is x2 for top/bottom and left/right
+            var heightZoom = this.dims.height / (this.graphDims.height + margin.y * 2);
+            var widthZoom = this.dims.width / (this.graphDims.width + margin.x * 2);
             var zoomLevel = Math.min(heightZoom, widthZoom, 1);
             if (zoomLevel < this.minZoomLevel) {
                 zoomLevel = this.minZoomLevel;
@@ -2249,6 +2255,7 @@
         panOnZoom: [{ type: core.Input }],
         animate: [{ type: core.Input }],
         autoCenter: [{ type: core.Input }],
+        zoomToFitMargin: [{ type: core.Input }],
         update$: [{ type: core.Input }],
         center$: [{ type: core.Input }],
         zoomToFit$: [{ type: core.Input }],

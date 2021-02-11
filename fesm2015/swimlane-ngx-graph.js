@@ -1666,8 +1666,14 @@ class GraphComponent extends BaseChartComponent {
      * Zooms to fit the entier graph
      */
     zoomToFit() {
-        const heightZoom = this.dims.height / this.graphDims.height;
-        const widthZoom = this.dims.width / this.graphDims.width;
+        var _a, _b;
+        const margin = {
+            x: ((_a = this.zoomToFitMargin) === null || _a === void 0 ? void 0 : _a.x) || 0,
+            y: ((_b = this.zoomToFitMargin) === null || _b === void 0 ? void 0 : _b.y) || 0,
+        };
+        // Margin value is x2 for top/bottom and left/right
+        const heightZoom = this.dims.height / (this.graphDims.height + margin.y * 2);
+        const widthZoom = this.dims.width / (this.graphDims.width + margin.x * 2);
         let zoomLevel = Math.min(heightZoom, widthZoom, 1);
         if (zoomLevel < this.minZoomLevel) {
             zoomLevel = this.minZoomLevel;
@@ -1767,6 +1773,7 @@ GraphComponent.propDecorators = {
     panOnZoom: [{ type: Input }],
     animate: [{ type: Input }],
     autoCenter: [{ type: Input }],
+    zoomToFitMargin: [{ type: Input }],
     update$: [{ type: Input }],
     center$: [{ type: Input }],
     zoomToFit$: [{ type: Input }],
