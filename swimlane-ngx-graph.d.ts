@@ -4,4 +4,3 @@
 export * from './public_api';
 export { LayoutService as ɵa } from './lib/graph/layouts/layout.service';
 export { throttleable as ɵb } from './lib/utils/throttle';
-export { VisibilityObserver as ɵc } from './lib/utils/visibility-observer';

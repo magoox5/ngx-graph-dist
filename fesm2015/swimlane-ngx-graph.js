@@ -1,21 +1,19 @@
-import { Injectable, EventEmitter, Directive, ElementRef, NgZone, Output, Component, ViewEncapsulation, ChangeDetectionStrategy, ChangeDetectorRef, Input, ContentChild, ViewChildren, HostListener, NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { __decorate } from 'tslib';
-import { trigger, transition, style, animate } from '@angular/animations';
+import { Injectable, EventEmitter, Component, ViewEncapsulation, ChangeDetectionStrategy, ElementRef, NgZone, ChangeDetectorRef, Input, Output, ContentChild, ViewChild, ViewChildren, HostListener, Directive, NgModule } from '@angular/core';
+import { __decorate, __metadata } from 'tslib';
+import { BaseChartComponent, calculateViewDimensions, ColorHelper, ChartComponent, ChartCommonModule, NgxChartsModule } from '@swimlane/ngx-charts';
 import { select } from 'd3-selection';
-import * as shape from 'd3-shape';
-import * as ease from 'd3-ease';
+import { curveBundle, line } from 'd3-shape';
+import { easeSinInOut } from 'd3-ease';
 import 'd3-transition';
-import { Subject, Subscription, Observable, of, fromEvent } from 'rxjs';
-import { first, debounceTime } from 'rxjs/operators';
+import { Subject, Subscription, Observable, of } from 'rxjs';
+import { first } from 'rxjs/operators';
 import { identity, transform, translate, scale, toSVG, smoothMatrix } from 'transformation-matrix';
-import * as dagre from 'dagre';
+import { layout, graphlib } from 'dagre';
 import * as d3Force from 'd3-force';
 import { forceSimulation, forceManyBody, forceCollide, forceLink } from 'd3-force';
 import { d3adaptor } from 'webcola';
 import * as d3Dispatch from 'd3-dispatch';
 import * as d3Timer from 'd3-timer';
-import { scaleOrdinal } from 'd3-scale';
 
 const cache = {};
 /**
@@ -64,7 +62,7 @@ class DagreLayout {
     }
     run(graph) {
         this.createDagreGraph(graph);
-        dagre.layout(this.dagreGraph);
+        layout(this.dagreGraph);
         graph.edgeLabels = this.dagreGraph._edgeLabels;
         for (const dagreNodeId in this.dagreGraph._nodes) {
             const dagreNode = this.dagreGraph._nodes[dagreNodeId];
@@ -99,7 +97,7 @@ class DagreLayout {
     }
     createDagreGraph(graph) {
         const settings = Object.assign({}, this.defaultSettings, this.settings);
-        this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
+        this.dagreGraph = new graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
         this.dagreGraph.setGraph({
             rankdir: settings.orientation,
             marginx: settings.marginX,
@@ -173,7 +171,7 @@ class DagreClusterLayout {
     }
     run(graph) {
         this.createDagreGraph(graph);
-        dagre.layout(this.dagreGraph);
+        layout(this.dagreGraph);
         graph.edgeLabels = this.dagreGraph._edgeLabels;
         const dagreToOutput = node => {
             const dagreNode = this.dagreGraph._nodes[node.id];
@@ -208,7 +206,7 @@ class DagreClusterLayout {
     }
     createDagreGraph(graph) {
         const settings = Object.assign({}, this.defaultSettings, this.settings);
-        this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
+        this.dagreGraph = new graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
         this.dagreGraph.setGraph({
             rankdir: settings.orientation,
             marginx: settings.marginX,
@@ -286,7 +284,7 @@ class DagreNodesOnlyLayout {
     }
     run(graph) {
         this.createDagreGraph(graph);
-        dagre.layout(this.dagreGraph);
+        layout(this.dagreGraph);
         graph.edgeLabels = this.dagreGraph._edgeLabels;
         for (const dagreNodeId in this.dagreGraph._nodes) {
             const dagreNode = this.dagreGraph._nodes[dagreNodeId];
@@ -344,7 +342,7 @@ class DagreNodesOnlyLayout {
     }
     createDagreGraph(graph) {
         const settings = Object.assign({}, this.defaultSettings, this.settings);
-        this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
+        this.dagreGraph = new graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
         this.dagreGraph.setGraph({
             rankdir: settings.orientation,
             marginx: settings.marginX,
@@ -532,7 +530,8 @@ class ColaForceDirectedLayout {
                 .avoidOverlaps(true),
             viewDimensions: {
                 width: 600,
-                height: 600
+                height: 600,
+                xOffset: 0
             }
         };
         this.settings = {};
@@ -803,381 +802,14 @@ function throttleable(duration, options) {
     };
 }
 
-let colorSets = [
-    {
-        name: 'vivid',
-        selectable: true,
-        group: 'Ordinal',
-        domain: [
-            '#647c8a',
-            '#3f51b5',
-            '#2196f3',
-            '#00b862',
-            '#afdf0a',
-            '#a7b61a',
-            '#f3e562',
-            '#ff9800',
-            '#ff5722',
-            '#ff4514'
-        ]
-    },
-    {
-        name: 'natural',
-        selectable: true,
-        group: 'Ordinal',
-        domain: [
-            '#bf9d76',
-            '#e99450',
-            '#d89f59',
-            '#f2dfa7',
-            '#a5d7c6',
-            '#7794b1',
-            '#afafaf',
-            '#707160',
-            '#ba9383',
-            '#d9d5c3'
-        ]
-    },
-    {
-        name: 'cool',
-        selectable: true,
-        group: 'Ordinal',
-        domain: [
-            '#a8385d',
-            '#7aa3e5',
-            '#a27ea8',
-            '#aae3f5',
-            '#adcded',
-            '#a95963',
-            '#8796c0',
-            '#7ed3ed',
-            '#50abcc',
-            '#ad6886'
-        ]
-    },
-    {
-        name: 'fire',
-        selectable: true,
-        group: 'Ordinal',
-        domain: ['#ff3d00', '#bf360c', '#ff8f00', '#ff6f00', '#ff5722', '#e65100', '#ffca28', '#ffab00']
-    },
-    {
-        name: 'solar',
-        selectable: true,
-        group: 'Continuous',
-        domain: [
-            '#fff8e1',
-            '#ffecb3',
-            '#ffe082',
-            '#ffd54f',
-            '#ffca28',
-            '#ffc107',
-            '#ffb300',
-            '#ffa000',
-            '#ff8f00',
-            '#ff6f00'
-        ]
-    },
-    {
-        name: 'air',
-        selectable: true,
-        group: 'Continuous',
-        domain: [
-            '#e1f5fe',
-            '#b3e5fc',
-            '#81d4fa',
-            '#4fc3f7',
-            '#29b6f6',
-            '#03a9f4',
-            '#039be5',
-            '#0288d1',
-            '#0277bd',
-            '#01579b'
-        ]
-    },
-    {
-        name: 'aqua',
-        selectable: true,
-        group: 'Continuous',
-        domain: [
-            '#e0f7fa',
-            '#b2ebf2',
-            '#80deea',
-            '#4dd0e1',
-            '#26c6da',
-            '#00bcd4',
-            '#00acc1',
-            '#0097a7',
-            '#00838f',
-            '#006064'
-        ]
-    },
-    {
-        name: 'flame',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#A10A28',
-            '#D3342D',
-            '#EF6D49',
-            '#FAAD67',
-            '#FDDE90',
-            '#DBED91',
-            '#A9D770',
-            '#6CBA67',
-            '#2C9653',
-            '#146738'
-        ]
-    },
-    {
-        name: 'ocean',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#1D68FB',
-            '#33C0FC',
-            '#4AFFFE',
-            '#AFFFFF',
-            '#FFFC63',
-            '#FDBD2D',
-            '#FC8A25',
-            '#FA4F1E',
-            '#FA141B',
-            '#BA38D1'
-        ]
-    },
-    {
-        name: 'forest',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#55C22D',
-            '#C1F33D',
-            '#3CC099',
-            '#AFFFFF',
-            '#8CFC9D',
-            '#76CFFA',
-            '#BA60FB',
-            '#EE6490',
-            '#C42A1C',
-            '#FC9F32'
-        ]
-    },
-    {
-        name: 'horizon',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#2597FB',
-            '#65EBFD',
-            '#99FDD0',
-            '#FCEE4B',
-            '#FEFCFA',
-            '#FDD6E3',
-            '#FCB1A8',
-            '#EF6F7B',
-            '#CB96E8',
-            '#EFDEE0'
-        ]
-    },
-    {
-        name: 'neons',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#FF3333',
-            '#FF33FF',
-            '#CC33FF',
-            '#0000FF',
-            '#33CCFF',
-            '#33FFFF',
-            '#33FF66',
-            '#CCFF33',
-            '#FFCC00',
-            '#FF6600'
-        ]
-    },
-    {
-        name: 'picnic',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#FAC51D',
-            '#66BD6D',
-            '#FAA026',
-            '#29BB9C',
-            '#E96B56',
-            '#55ACD2',
-            '#B7332F',
-            '#2C83C9',
-            '#9166B8',
-            '#92E7E8'
-        ]
-    },
-    {
-        name: 'night',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#2B1B5A',
-            '#501356',
-            '#183356',
-            '#28203F',
-            '#391B3C',
-            '#1E2B3C',
-            '#120634',
-            '#2D0432',
-            '#051932',
-            '#453080',
-            '#75267D',
-            '#2C507D',
-            '#4B3880',
-            '#752F7D',
-            '#35547D'
-        ]
-    },
-    {
-        name: 'nightLights',
-        selectable: false,
-        group: 'Ordinal',
-        domain: [
-            '#4e31a5',
-            '#9c25a7',
-            '#3065ab',
-            '#57468b',
-            '#904497',
-            '#46648b',
-            '#32118d',
-            '#a00fb3',
-            '#1052a2',
-            '#6e51bd',
-            '#b63cc3',
-            '#6c97cb',
-            '#8671c1',
-            '#b455be',
-            '#7496c3'
-        ]
-    }
-];
-
-class ColorHelper {
-    constructor(scheme, domain, customColors) {
-        if (typeof scheme === 'string') {
-            scheme = colorSets.find(cs => {
-                return cs.name === scheme;
-            });
-        }
-        this.colorDomain = scheme.domain;
-        this.domain = domain;
-        this.customColors = customColors;
-        this.scale = this.generateColorScheme(scheme, this.domain);
-    }
-    generateColorScheme(scheme, domain) {
-        if (typeof scheme === 'string') {
-            scheme = colorSets.find(cs => {
-                return cs.name === scheme;
-            });
-        }
-        return scaleOrdinal().range(scheme.domain).domain(domain);
-    }
-    getColor(value) {
-        if (value === undefined || value === null) {
-            throw new Error('Value can not be null');
-        }
-        if (typeof this.customColors === 'function') {
-            return this.customColors(value);
-        }
-        const formattedValue = value.toString();
-        let found; // todo type customColors
-        if (this.customColors && this.customColors.length > 0) {
-            found = this.customColors.find(mapping => {
-                return mapping.name.toLowerCase() === formattedValue.toLowerCase();
-            });
-        }
-        if (found) {
-            return found.value;
-        }
-        else {
-            return this.scale(value);
-        }
-    }
-}
-
-function calculateViewDimensions({ width, height }) {
-    let chartWidth = width;
-    let chartHeight = height;
-    chartWidth = Math.max(0, chartWidth);
-    chartHeight = Math.max(0, chartHeight);
-    return {
-        width: Math.floor(chartWidth),
-        height: Math.floor(chartHeight)
-    };
-}
-
-/**
- * Visibility Observer
- */
-class VisibilityObserver {
-    constructor(element, zone) {
-        this.element = element;
-        this.zone = zone;
-        this.visible = new EventEmitter();
-        this.isVisible = false;
-        this.runCheck();
-    }
-    destroy() {
-        clearTimeout(this.timeout);
-    }
-    onVisibilityChange() {
-        // trigger zone recalc for columns
-        this.zone.run(() => {
-            this.isVisible = true;
-            this.visible.emit(true);
-        });
-    }
-    runCheck() {
-        const check = () => {
-            if (!this.element) {
-                return;
-            }
-            // https://davidwalsh.name/offsetheight-visibility
-            const { offsetHeight, offsetWidth } = this.element.nativeElement;
-            if (offsetHeight && offsetWidth) {
-                clearTimeout(this.timeout);
-                this.onVisibilityChange();
-            }
-            else {
-                clearTimeout(this.timeout);
-                this.zone.runOutsideAngular(() => {
-                    this.timeout = setTimeout(() => check(), 100);
-                });
-            }
-        };
-        this.zone.runOutsideAngular(() => {
-            this.timeout = setTimeout(() => check());
-        });
-    }
-}
-VisibilityObserver.decorators = [
-    { type: Directive, args: [{
-                // tslint:disable-next-line:directive-selector
-                selector: 'visibility-observer'
-            },] }
-];
-VisibilityObserver.ctorParameters = () => [
-    { type: ElementRef },
-    { type: NgZone }
-];
-VisibilityObserver.propDecorators = {
-    visible: [{ type: Output }]
-};
-
-class GraphComponent {
+class GraphComponent extends BaseChartComponent {
     constructor(el, zone, cd, layoutService) {
+        super(el, zone, cd);
         this.el = el;
         this.zone = zone;
         this.cd = cd;
         this.layoutService = layoutService;
+        this.legend = false;
         this.nodes = [];
         this.clusters = [];
         this.links = [];
@@ -1197,9 +829,6 @@ class GraphComponent {
         this.showMiniMap = false;
         this.miniMapMaxWidth = 100;
         this.miniMapPosition = MiniMapPosition.UpperRight;
-        this.scheme = 'cool';
-        this.animations = true;
-        this.select = new EventEmitter();
         this.activate = new EventEmitter();
         this.deactivate = new EventEmitter();
         this.zoomChange = new EventEmitter();
@@ -1207,6 +836,8 @@ class GraphComponent {
         this.isMouseMoveCalled = false;
         this.graphSubscription = new Subscription();
         this.subscriptions = [];
+        this.margin = [0, 0, 0, 0];
+        this.results = [];
         this.isPanning = false;
         this.isDragging = false;
         this.initialized = false;
@@ -1289,7 +920,6 @@ class GraphComponent {
         this.minimapClipPathId = `minimapClip${id()}`;
     }
     ngOnChanges(changes) {
-        this.basicUpdate();
         const { layout, layoutSettings, nodes, clusters, links } = changes;
         this.setLayout(this.layout);
         if (layoutSettings) {
@@ -1319,11 +949,7 @@ class GraphComponent {
      * @memberOf GraphComponent
      */
     ngOnDestroy() {
-        this.unbindEvents();
-        if (this.visibilityObserver) {
-            this.visibilityObserver.visible.unsubscribe();
-            this.visibilityObserver.destroy();
-        }
+        super.ngOnDestroy();
         for (const sub of this.subscriptions) {
             sub.unsubscribe();
         }
@@ -1336,10 +962,7 @@ class GraphComponent {
      * @memberOf GraphComponent
      */
     ngAfterViewInit() {
-        this.bindWindowResizeEvent();
-        // listen for visibility of the element for hidden by default scenario
-        this.visibilityObserver = new VisibilityObserver(this.el, this.zone);
-        this.visibilityObserver.visible.subscribe(this.update.bind(this));
+        super.ngAfterViewInit();
         setTimeout(() => this.update());
     }
     /**
@@ -1348,17 +971,20 @@ class GraphComponent {
      * @memberOf GraphComponent
      */
     update() {
-        this.basicUpdate();
+        super.update();
         if (!this.curve) {
-            this.curve = shape.curveBundle.beta(1);
+            this.curve = curveBundle.beta(1);
         }
         this.zone.run(() => {
             this.dims = calculateViewDimensions({
                 width: this.width,
-                height: this.height
+                height: this.height,
+                margins: this.margin,
+                showLegend: this.legend
             });
             this.seriesDomain = this.getSeriesDomain();
             this.setColors();
+            this.legendOptions = this.getLegendOptions();
             this.createGraph();
             this.updateTransform();
             this.initialized = true;
@@ -1544,7 +1170,15 @@ class GraphComponent {
             maxX = node.position.x + node.dimension.width > maxX ? node.position.x + node.dimension.width : maxX;
             maxY = node.position.y + node.dimension.height > maxY ? node.position.y + node.dimension.height : maxY;
         }
-        if (this.showMiniMap) {
+        // When clusters are present, leave room around the graph
+        // to account for height and width they can add to the dimensions.
+        // Iterating through the graph clusters and min/maxing
+        // their position and dimension didn't work.
+        // The graph calculated size was still too low and some nodes
+        // were rendered outside of the view when using zoomToFit.
+        // Without clusters, using dagre, the extra spacing all around
+        // causes the graph to be shifted up/left instead of being centered.
+        if (this.graph.clusters.length > 0) {
             minX -= 100;
             minY -= 100;
             maxX += 100;
@@ -1665,14 +1299,14 @@ class GraphComponent {
                 linkSelection
                     .attr('d', edge.oldLine)
                     .transition()
-                    .ease(ease.easeSinInOut)
+                    .ease(easeSinInOut)
                     .duration(_animate ? 500 : 0)
                     .attr('d', edge.line);
-                const textPathSelection = select(this.el.nativeElement).select(`#${edge.id}`);
+                const textPathSelection = select(this.chartElement.nativeElement).select(`#${edge.id}`);
                 textPathSelection
                     .attr('d', edge.oldTextPath)
                     .transition()
-                    .ease(ease.easeSinInOut)
+                    .ease(easeSinInOut)
                     .duration(_animate ? 500 : 0)
                     .attr('d', edge.textPath);
                 this.updateMidpointOnEdge(edge, edge.points);
@@ -1704,8 +1338,7 @@ class GraphComponent {
      * @memberOf GraphComponent
      */
     generateLine(points) {
-        const lineFunction = shape
-            .line()
+        const lineFunction = line()
             .x(d => d.x)
             .y(d => d.y)
             .curve(this.curve);
@@ -1736,7 +1369,7 @@ class GraphComponent {
             const mouseX = $event.clientX;
             const mouseY = $event.clientY;
             // Transform the mouse X/Y into a SVG X/Y
-            const svg = this.el.nativeElement.querySelector('svg');
+            const svg = this.chart.nativeElement.querySelector('svg');
             const svgGroup = svg.querySelector('g.chart');
             const point = svg.createSVGPoint();
             point.x = mouseX;
@@ -1916,7 +1549,19 @@ class GraphComponent {
      * @memberOf GraphComponent
      */
     setColors() {
-        this.colors = new ColorHelper(this.scheme, this.seriesDomain, this.customColors);
+        this.colors = new ColorHelper(this.scheme, 'ordinal', this.seriesDomain, this.customColors);
+    }
+    /**
+     * Gets the legend options
+     *
+     * @memberOf GraphComponent
+     */
+    getLegendOptions() {
+        return {
+            scaleType: 'ordinal',
+            domain: this.seriesDomain,
+            colors: this.colors
+        };
     }
     /**
      * On mouse move event, used for panning and dragging.
@@ -2014,8 +1659,8 @@ class GraphComponent {
      * @memberOf GraphComponent
      */
     onMinimapPanTo(event) {
-        const x = event.offsetX - (this.dims.width - (this.graphDims.width + this.minimapOffsetX) / this.minimapScaleCoefficient);
-        const y = event.offsetY + this.minimapOffsetY / this.minimapScaleCoefficient;
+        let x = event.offsetX - (this.dims.width - (this.graphDims.width + this.minimapOffsetX) / this.minimapScaleCoefficient);
+        let y = event.offsetY + this.minimapOffsetY / this.minimapScaleCoefficient;
         this.panTo(x * this.minimapScaleCoefficient, y * this.minimapScaleCoefficient);
         this.isMinimapPanning = true;
     }
@@ -2096,74 +1741,14 @@ class GraphComponent {
             };
         }
     }
-    basicUpdate() {
-        if (this.view) {
-            this.width = this.view[0];
-            this.height = this.view[1];
-        }
-        else {
-            const dims = this.getContainerDims();
-            if (dims) {
-                this.width = dims.width;
-                this.height = dims.height;
-            }
-        }
-        // default values if width or height are 0 or undefined
-        if (!this.width) {
-            this.width = 600;
-        }
-        if (!this.height) {
-            this.height = 400;
-        }
-        this.width = Math.floor(this.width);
-        this.height = Math.floor(this.height);
-        if (this.cd) {
-            this.cd.markForCheck();
-        }
-    }
-    getContainerDims() {
-        let width;
-        let height;
-        const hostElem = this.el.nativeElement;
-        if (hostElem.parentNode !== null) {
-            // Get the container dimensions
-            const dims = hostElem.parentNode.getBoundingClientRect();
-            width = dims.width;
-            height = dims.height;
-        }
-        if (width && height) {
-            return { width, height };
-        }
-        return null;
-    }
-    unbindEvents() {
-        if (this.resizeSubscription) {
-            this.resizeSubscription.unsubscribe();
-        }
-    }
-    bindWindowResizeEvent() {
-        const source = fromEvent(window, 'resize');
-        const subscription = source.pipe(debounceTime(200)).subscribe(e => {
-            this.update();
-            if (this.cd) {
-                this.cd.markForCheck();
-            }
-        });
-        this.resizeSubscription = subscription;
-    }
 }
 GraphComponent.decorators = [
     { type: Component, args: [{
                 selector: 'ngx-graph',
-                template: "<div\n  class=\"ngx-charts-outer\"\n  [style.width.px]=\"width\"\n  [@animationState]=\"'active'\"\n  [@.disabled]=\"!animations\"\n  (mouseWheelUp)=\"onZoom($event, 'in')\"\n  (mouseWheelDown)=\"onZoom($event, 'out')\"\n  mouseWheel\n>\n  <svg:svg class=\"ngx-charts\" [attr.width]=\"width\" [attr.height]=\"height\">\n    <svg:g\n      *ngIf=\"initialized && graph\"\n      [attr.transform]=\"transform\"\n      (touchstart)=\"onTouchStart($event)\"\n      (touchend)=\"onTouchEnd($event)\"\n      class=\"graph chart\"\n    >\n      <defs>\n        <ng-container *ngIf=\"defsTemplate\" [ngTemplateOutlet]=\"defsTemplate\"></ng-container>\n        <svg:path\n          class=\"text-path\"\n          *ngFor=\"let link of graph.edges\"\n          [attr.d]=\"link.textPath\"\n          [attr.id]=\"link.id\"\n        ></svg:path>\n      </defs>\n\n      <svg:rect\n        class=\"panning-rect\"\n        [attr.width]=\"dims.width * 100\"\n        [attr.height]=\"dims.height * 100\"\n        [attr.transform]=\"'translate(' + (-dims.width || 0) * 50 + ',' + (-dims.height || 0) * 50 + ')'\"\n        (mousedown)=\"isPanning = true\"\n      />\n\n      <ng-content></ng-content>\n\n      <svg:g class=\"clusters\">\n        <svg:g\n          #clusterElement\n          *ngFor=\"let node of graph.clusters; trackBy: trackNodeBy\"\n          class=\"node-group\"\n          [class.old-node]=\"animate && oldClusters.has(node.id)\"\n          [id]=\"node.id\"\n          [attr.transform]=\"node.transform\"\n          (click)=\"onClick(node)\"\n        >\n          <ng-container\n            *ngIf=\"clusterTemplate\"\n            [ngTemplateOutlet]=\"clusterTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <svg:g *ngIf=\"!clusterTemplate\" class=\"node cluster\">\n            <svg:rect\n              [attr.width]=\"node.dimension.width\"\n              [attr.height]=\"node.dimension.height\"\n              [attr.fill]=\"node.data?.color\"\n            />\n            <svg:text alignment-baseline=\"central\" [attr.x]=\"10\" [attr.y]=\"node.dimension.height / 2\">\n              {{ node.label }}\n            </svg:text>\n          </svg:g>\n        </svg:g>\n      </svg:g>\n\n      <svg:g class=\"links\">\n        <svg:g #linkElement *ngFor=\"let link of graph.edges; trackBy: trackLinkBy\" class=\"link-group\" [id]=\"link.id\">\n          <ng-container\n            *ngIf=\"linkTemplate\"\n            [ngTemplateOutlet]=\"linkTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: link }\"\n          ></ng-container>\n          <svg:path *ngIf=\"!linkTemplate\" class=\"edge\" [attr.d]=\"link.line\" />\n        </svg:g>\n      </svg:g>\n\n      <svg:g class=\"nodes\">\n        <svg:g\n          #nodeElement\n          *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n          class=\"node-group\"\n          [class.old-node]=\"animate && oldNodes.has(node.id)\"\n          [id]=\"node.id\"\n          [attr.transform]=\"node.transform\"\n          (click)=\"onClick(node)\"\n          (mousedown)=\"onNodeMouseDown($event, node)\"\n        >\n          <ng-container\n            *ngIf=\"nodeTemplate\"\n            [ngTemplateOutlet]=\"nodeTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <svg:circle\n            *ngIf=\"!nodeTemplate\"\n            r=\"10\"\n            [attr.cx]=\"node.dimension.width / 2\"\n            [attr.cy]=\"node.dimension.height / 2\"\n            [attr.fill]=\"node.data?.color\"\n          />\n        </svg:g>\n      </svg:g>\n    </svg:g>\n\n    <svg:clipPath [attr.id]=\"minimapClipPathId\">\n      <svg:rect\n        [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n        [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n      ></svg:rect>\n    </svg:clipPath>\n\n    <svg:g\n      class=\"minimap\"\n      *ngIf=\"showMiniMap\"\n      [attr.transform]=\"minimapTransform\"\n      [attr.clip-path]=\"'url(#' + minimapClipPathId + ')'\"\n    >\n      <svg:rect\n        class=\"minimap-background\"\n        [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n        [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n        (mousedown)=\"onMinimapPanTo($event)\"\n      ></svg:rect>\n\n      <svg:g\n        [style.transform]=\"\n          'translate(' +\n          -minimapOffsetX / minimapScaleCoefficient +\n          'px,' +\n          -minimapOffsetY / minimapScaleCoefficient +\n          'px)'\n        \"\n      >\n        <svg:g class=\"minimap-nodes\" [style.transform]=\"'scale(' + 1 / minimapScaleCoefficient + ')'\">\n          <svg:g\n            #nodeElement\n            *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n            class=\"node-group\"\n            [class.old-node]=\"animate && oldNodes.has(node.id)\"\n            [id]=\"node.id\"\n            [attr.transform]=\"node.transform\"\n          >\n            <ng-container\n              *ngIf=\"miniMapNodeTemplate\"\n              [ngTemplateOutlet]=\"miniMapNodeTemplate\"\n              [ngTemplateOutletContext]=\"{ $implicit: node }\"\n            ></ng-container>\n            <ng-container\n              *ngIf=\"!miniMapNodeTemplate && nodeTemplate\"\n              [ngTemplateOutlet]=\"nodeTemplate\"\n              [ngTemplateOutletContext]=\"{ $implicit: node }\"\n            ></ng-container>\n            <svg:circle\n              *ngIf=\"!nodeTemplate && !miniMapNodeTemplate\"\n              r=\"10\"\n              [attr.cx]=\"node.dimension.width / 2 / minimapScaleCoefficient\"\n              [attr.cy]=\"node.dimension.height / 2 / minimapScaleCoefficient\"\n              [attr.fill]=\"node.data?.color\"\n            />\n          </svg:g>\n        </svg:g>\n\n        <svg:rect\n          [attr.transform]=\"\n            'translate(' +\n            panOffsetX / zoomLevel / -minimapScaleCoefficient +\n            ',' +\n            panOffsetY / zoomLevel / -minimapScaleCoefficient +\n            ')'\n          \"\n          class=\"minimap-drag\"\n          [class.panning]=\"isMinimapPanning\"\n          [attr.width]=\"width / minimapScaleCoefficient / zoomLevel\"\n          [attr.height]=\"height / minimapScaleCoefficient / zoomLevel\"\n          (mousedown)=\"onMinimapDragMouseDown()\"\n        ></svg:rect>\n      </svg:g>\n    </svg:g>\n  </svg:svg>\n</div>\n",
+                template: "<ngx-charts-chart\n  [view]=\"[width, height]\"\n  [showLegend]=\"legend\"\n  [legendOptions]=\"legendOptions\"\n  (legendLabelClick)=\"onClick($event)\"\n  (legendLabelActivate)=\"onActivate($event)\"\n  (legendLabelDeactivate)=\"onDeactivate($event)\"\n  mouseWheel\n  (mouseWheelUp)=\"onZoom($event, 'in')\"\n  (mouseWheelDown)=\"onZoom($event, 'out')\"\n>\n  <svg:g\n    *ngIf=\"initialized && graph\"\n    [attr.transform]=\"transform\"\n    (touchstart)=\"onTouchStart($event)\"\n    (touchend)=\"onTouchEnd($event)\"\n    class=\"graph chart\"\n  >\n    <defs>\n      <ng-container *ngIf=\"defsTemplate\" [ngTemplateOutlet]=\"defsTemplate\"></ng-container>\n      <svg:path\n        class=\"text-path\"\n        *ngFor=\"let link of graph.edges\"\n        [attr.d]=\"link.textPath\"\n        [attr.id]=\"link.id\"\n      ></svg:path>\n    </defs>\n\n    <svg:rect\n      class=\"panning-rect\"\n      [attr.width]=\"dims.width * 100\"\n      [attr.height]=\"dims.height * 100\"\n      [attr.transform]=\"'translate(' + (-dims.width || 0) * 50 + ',' + (-dims.height || 0) * 50 + ')'\"\n      (mousedown)=\"isPanning = true\"\n    />\n\n    <ng-content></ng-content>\n\n    <svg:g class=\"clusters\">\n      <svg:g\n        #clusterElement\n        *ngFor=\"let node of graph.clusters; trackBy: trackNodeBy\"\n        class=\"node-group\"\n        [class.old-node]=\"animate && oldClusters.has(node.id)\"\n        [id]=\"node.id\"\n        [attr.transform]=\"node.transform\"\n        (click)=\"onClick(node)\"\n      >\n        <ng-container\n          *ngIf=\"clusterTemplate\"\n          [ngTemplateOutlet]=\"clusterTemplate\"\n          [ngTemplateOutletContext]=\"{ $implicit: node }\"\n        ></ng-container>\n        <svg:g *ngIf=\"!clusterTemplate\" class=\"node cluster\">\n          <svg:rect\n            [attr.width]=\"node.dimension.width\"\n            [attr.height]=\"node.dimension.height\"\n            [attr.fill]=\"node.data?.color\"\n          />\n          <svg:text alignment-baseline=\"central\" [attr.x]=\"10\" [attr.y]=\"node.dimension.height / 2\">\n            {{ node.label }}\n          </svg:text>\n        </svg:g>\n      </svg:g>\n    </svg:g>\n\n    <svg:g class=\"links\">\n      <svg:g #linkElement *ngFor=\"let link of graph.edges; trackBy: trackLinkBy\" class=\"link-group\" [id]=\"link.id\">\n        <ng-container\n          *ngIf=\"linkTemplate\"\n          [ngTemplateOutlet]=\"linkTemplate\"\n          [ngTemplateOutletContext]=\"{ $implicit: link }\"\n        ></ng-container>\n        <svg:path *ngIf=\"!linkTemplate\" class=\"edge\" [attr.d]=\"link.line\" />\n      </svg:g>\n    </svg:g>\n\n    <svg:g class=\"nodes\">\n      <svg:g\n        #nodeElement\n        *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n        class=\"node-group\"\n        [class.old-node]=\"animate && oldNodes.has(node.id)\"\n        [id]=\"node.id\"\n        [attr.transform]=\"node.transform\"\n        (click)=\"onClick(node)\"\n        (mousedown)=\"onNodeMouseDown($event, node)\"\n      >\n        <ng-container\n          *ngIf=\"nodeTemplate\"\n          [ngTemplateOutlet]=\"nodeTemplate\"\n          [ngTemplateOutletContext]=\"{ $implicit: node }\"\n        ></ng-container>\n        <svg:circle\n          *ngIf=\"!nodeTemplate\"\n          r=\"10\"\n          [attr.cx]=\"node.dimension.width / 2\"\n          [attr.cy]=\"node.dimension.height / 2\"\n          [attr.fill]=\"node.data?.color\"\n        />\n      </svg:g>\n    </svg:g>\n  </svg:g>\n\n  <svg:clipPath [attr.id]=\"minimapClipPathId\">\n    <svg:rect\n      [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n      [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n    ></svg:rect>\n  </svg:clipPath>\n\n  <svg:g\n    class=\"minimap\"\n    *ngIf=\"showMiniMap\"\n    [attr.transform]=\"minimapTransform\"\n    [attr.clip-path]=\"'url(#' + minimapClipPathId + ')'\"\n  >\n    <svg:rect\n      class=\"minimap-background\"\n      [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n      [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n      (mousedown)=\"onMinimapPanTo($event)\"\n    ></svg:rect>\n\n    <svg:g\n      [style.transform]=\"\n        'translate(' +\n        -minimapOffsetX / minimapScaleCoefficient +\n        'px,' +\n        -minimapOffsetY / minimapScaleCoefficient +\n        'px)'\n      \"\n    >\n      <svg:g class=\"minimap-nodes\" [style.transform]=\"'scale(' + 1 / minimapScaleCoefficient + ')'\">\n        <svg:g\n          #nodeElement\n          *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n          class=\"node-group\"\n          [class.old-node]=\"animate && oldNodes.has(node.id)\"\n          [id]=\"node.id\"\n          [attr.transform]=\"node.transform\"\n        >\n          <ng-container\n            *ngIf=\"miniMapNodeTemplate\"\n            [ngTemplateOutlet]=\"miniMapNodeTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <ng-container\n            *ngIf=\"!miniMapNodeTemplate && nodeTemplate\"\n            [ngTemplateOutlet]=\"nodeTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <svg:circle\n            *ngIf=\"!nodeTemplate && !miniMapNodeTemplate\"\n            r=\"10\"\n            [attr.cx]=\"node.dimension.width / 2 / minimapScaleCoefficient\"\n            [attr.cy]=\"node.dimension.height / 2 / minimapScaleCoefficient\"\n            [attr.fill]=\"node.data?.color\"\n          />\n        </svg:g>\n      </svg:g>\n\n      <svg:rect\n        [attr.transform]=\"\n          'translate(' +\n          panOffsetX / zoomLevel / -minimapScaleCoefficient +\n          ',' +\n          panOffsetY / zoomLevel / -minimapScaleCoefficient +\n          ')'\n        \"\n        class=\"minimap-drag\"\n        [class.panning]=\"isMinimapPanning\"\n        [attr.width]=\"width / minimapScaleCoefficient / zoomLevel\"\n        [attr.height]=\"height / minimapScaleCoefficient / zoomLevel\"\n        (mousedown)=\"onMinimapDragMouseDown()\"\n      ></svg:rect>\n    </svg:g>\n  </svg:g>\n</ngx-charts-chart>\n",
                 encapsulation: ViewEncapsulation.None,
                 changeDetection: ChangeDetectionStrategy.OnPush,
-                animations: [
-                    trigger('animationState', [
-                        transition(':enter', [style({ opacity: 0 }), animate('500ms 100ms', style({ opacity: 1 }))])
-                    ])
-                ],
-                styles: [".minimap .minimap-background{fill:#0000001a}.minimap .minimap-drag{fill:#0003;stroke:#fff;stroke-width:1px;stroke-dasharray:2px;stroke-dashoffset:2px;cursor:pointer}.minimap .minimap-drag.panning{fill:#0000004d}.minimap .minimap-nodes{opacity:.5;pointer-events:none}.graph{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.graph .edge{stroke:#666;fill:none}.graph .edge .edge-label{stroke:none;font-size:12px;fill:#251e1e}.graph .panning-rect{fill:#0000;cursor:move}.graph .node-group.old-node{transition:transform .5s ease-in-out}.graph .node-group .node:focus{outline:none}.graph .cluster rect{opacity:.2}\n"]
+                styles: [".minimap .minimap-background{fill:rgba(0,0,0,.1)}.minimap .minimap-drag{cursor:pointer;fill:rgba(0,0,0,.2);stroke:#fff;stroke-dasharray:2px;stroke-dashoffset:2px;stroke-width:1px}.minimap .minimap-drag.panning{fill:rgba(0,0,0,.3)}.minimap .minimap-nodes{opacity:.5;pointer-events:none}.graph{-moz-user-select:none;-ms-user-select:none;-webkit-user-select:none;user-select:none}.graph .edge{fill:none;stroke:#666}.graph .edge .edge-label{fill:#251e1e;font-size:12px;stroke:none}.graph .panning-rect{cursor:move;fill:transparent}.graph .node-group.old-node{transition:transform .5s ease-in-out}.graph .node-group .node:focus{outline:none}.graph .cluster rect{opacity:.2}"]
             },] }
 ];
 GraphComponent.ctorParameters = () => [
@@ -2173,6 +1758,7 @@ GraphComponent.ctorParameters = () => [
     { type: LayoutService }
 ];
 GraphComponent.propDecorators = {
+    legend: [{ type: Input }],
     nodes: [{ type: Input }],
     clusters: [{ type: Input }],
     links: [{ type: Input }],
@@ -2207,11 +1793,6 @@ GraphComponent.propDecorators = {
     miniMapMaxWidth: [{ type: Input }],
     miniMapMaxHeight: [{ type: Input }],
     miniMapPosition: [{ type: Input }],
-    view: [{ type: Input }],
-    scheme: [{ type: Input }],
-    customColors: [{ type: Input }],
-    animations: [{ type: Input }],
-    select: [{ type: Output }],
     activate: [{ type: Output }],
     deactivate: [{ type: Output }],
     zoomChange: [{ type: Output }],
@@ -2221,6 +1802,7 @@ GraphComponent.propDecorators = {
     clusterTemplate: [{ type: ContentChild, args: ['clusterTemplate',] }],
     defsTemplate: [{ type: ContentChild, args: ['defsTemplate',] }],
     miniMapNodeTemplate: [{ type: ContentChild, args: ['miniMapNodeTemplate',] }],
+    chart: [{ type: ViewChild, args: [ChartComponent, { read: ElementRef, static: true },] }],
     nodeElements: [{ type: ViewChildren, args: ['nodeElement',] }],
     linkElements: [{ type: ViewChildren, args: ['linkElement',] }],
     groupResultsBy: [{ type: Input }],
@@ -2234,7 +1816,10 @@ GraphComponent.propDecorators = {
     onMouseUp: [{ type: HostListener, args: ['document:mouseup', ['$event'],] }]
 };
 __decorate([
-    throttleable(500)
+    throttleable(500),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
 ], GraphComponent.prototype, "updateMinimap", null);
 
 /**
@@ -2299,8 +1884,8 @@ class GraphModule {
 }
 GraphModule.decorators = [
     { type: NgModule, args: [{
-                imports: [CommonModule],
-                declarations: [GraphComponent, MouseWheelDirective, VisibilityObserver],
+                imports: [ChartCommonModule],
+                declarations: [GraphComponent, MouseWheelDirective],
                 exports: [GraphComponent, MouseWheelDirective],
                 providers: [LayoutService]
             },] }
@@ -2310,7 +1895,7 @@ class NgxGraphModule {
 }
 NgxGraphModule.decorators = [
     { type: NgModule, args: [{
-                imports: [CommonModule],
+                imports: [NgxChartsModule],
                 exports: [GraphModule]
             },] }
 ];
@@ -2323,5 +1908,5 @@ NgxGraphModule.decorators = [
  * Generated bundle index. Do not edit.
  */
 
-export { Alignment, ColaForceDirectedLayout, D3ForceDirectedLayout, DagreClusterLayout, DagreLayout, DagreNodesOnlyLayout, GraphComponent, GraphModule, MiniMapPosition, MouseWheelDirective, NgxGraphModule, Orientation, PanningAxis, toD3Node, toNode, LayoutService as ɵa, throttleable as ɵb, VisibilityObserver as ɵc };
+export { Alignment, ColaForceDirectedLayout, D3ForceDirectedLayout, DagreClusterLayout, DagreLayout, DagreNodesOnlyLayout, GraphComponent, GraphModule, MiniMapPosition, MouseWheelDirective, NgxGraphModule, Orientation, PanningAxis, toD3Node, toNode, LayoutService as ɵa, throttleable as ɵb };
 //# sourceMappingURL=swimlane-ngx-graph.js.map

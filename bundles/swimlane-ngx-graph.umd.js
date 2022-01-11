@@ -1,30 +1,30 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@angular/common'), require('@angular/animations'), require('d3-selection'), require('d3-shape'), require('d3-ease'), require('d3-transition'), require('rxjs'), require('rxjs/operators'), require('transformation-matrix'), require('dagre'), require('d3-force'), require('webcola'), require('d3-dispatch'), require('d3-timer'), require('d3-scale')) :
-    typeof define === 'function' && define.amd ? define('@swimlane/ngx-graph', ['exports', '@angular/core', '@angular/common', '@angular/animations', 'd3-selection', 'd3-shape', 'd3-ease', 'd3-transition', 'rxjs', 'rxjs/operators', 'transformation-matrix', 'dagre', 'd3-force', 'webcola', 'd3-dispatch', 'd3-timer', 'd3-scale'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory((global.swimlane = global.swimlane || {}, global.swimlane["ngx-graph"] = {}), global.ng.core, global.ng.common, global.ng.animations, global.d3Selection, global.shape, global.ease, null, global.rxjs, global.rxjs.operators, global.transformationMatrix, global.dagre, global.d3Force, global.webcola, global.d3Dispatch, global.d3Timer, global.d3Scale));
-})(this, (function (exports, core, common, animations, d3Selection, shape, ease, d3Transition, rxjs, operators, transformationMatrix, dagre, d3Force, webcola, d3Dispatch, d3Timer, d3Scale) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@angular/core'), require('@swimlane/ngx-charts'), require('d3-selection'), require('d3-shape'), require('d3-ease'), require('d3-transition'), require('rxjs'), require('rxjs/operators'), require('transformation-matrix'), require('dagre'), require('d3-force'), require('webcola'), require('d3-dispatch'), require('d3-timer')) :
+    typeof define === 'function' && define.amd ? define('@swimlane/ngx-graph', ['exports', '@angular/core', '@swimlane/ngx-charts', 'd3-selection', 'd3-shape', 'd3-ease', 'd3-transition', 'rxjs', 'rxjs/operators', 'transformation-matrix', 'dagre', 'd3-force', 'webcola', 'd3-dispatch', 'd3-timer'], factory) :
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory((global.swimlane = global.swimlane || {}, global.swimlane['ngx-graph'] = {}), global.ng.core, global.ngxCharts, global.d3Selection, global.shape, global.ease, null, global.rxjs, global.rxjs.operators, global.transformationMatrix, global.dagre, global.d3Force, global.webcola, global.d3Dispatch, global.d3Timer));
+}(this, (function (exports, core, ngxCharts, d3Selection, shape, ease, d3Transition, rxjs, operators, transformationMatrix, dagre, d3Force, webcola, d3Dispatch, d3Timer) { 'use strict';
 
     function _interopNamespace(e) {
-        if (e && e.__esModule) return e;
-        var n = Object.create(null);
-        if (e) {
-            Object.keys(e).forEach(function (k) {
-                if (k !== 'default') {
-                    var d = Object.getOwnPropertyDescriptor(e, k);
-                    Object.defineProperty(n, k, d.get ? d : {
-                        enumerable: true,
-                        get: function () { return e[k]; }
-                    });
-                }
-            });
+        if (e && e.__esModule) { return e; } else {
+            var n = Object.create(null);
+            if (e) {
+                Object.keys(e).forEach(function (k) {
+                    if (k !== 'default') {
+                        var d = Object.getOwnPropertyDescriptor(e, k);
+                        Object.defineProperty(n, k, d.get ? d : {
+                            enumerable: true,
+                            get: function () {
+                                return e[k];
+                            }
+                        });
+                    }
+                });
+            }
+            n['default'] = e;
+            return Object.freeze(n);
         }
-        n["default"] = e;
-        return Object.freeze(n);
     }
 
-    var shape__namespace = /*#__PURE__*/_interopNamespace(shape);
-    var ease__namespace = /*#__PURE__*/_interopNamespace(ease);
-    var dagre__namespace = /*#__PURE__*/_interopNamespace(dagre);
     var d3Force__namespace = /*#__PURE__*/_interopNamespace(d3Force);
     var d3Dispatch__namespace = /*#__PURE__*/_interopNamespace(d3Dispatch);
     var d3Timer__namespace = /*#__PURE__*/_interopNamespace(d3Timer);
@@ -53,8 +53,6 @@
         return extendStatics(d, b);
     };
     function __extends(d, b) {
-        if (typeof b !== "function" && b !== null)
-            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
         extendStatics(d, b);
         function __() { this.constructor = d; }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
@@ -240,13 +238,11 @@
         }
         return ar;
     }
-    /** @deprecated */
     function __spread() {
         for (var ar = [], i = 0; i < arguments.length; i++)
             ar = ar.concat(__read(arguments[i]));
         return ar;
     }
-    /** @deprecated */
     function __spreadArrays() {
         for (var s = 0, i = 0, il = arguments.length; i < il; i++)
             s += arguments[i].length;
@@ -255,17 +251,7 @@
                 r[k] = a[j];
         return r;
     }
-    function __spreadArray(to, from, pack) {
-        if (pack || arguments.length === 2)
-            for (var i = 0, l = from.length, ar; i < l; i++) {
-                if (ar || !(i in from)) {
-                    if (!ar)
-                        ar = Array.prototype.slice.call(from, 0, i);
-                    ar[i] = from[i];
-                }
-            }
-        return to.concat(ar || Array.prototype.slice.call(from));
-    }
+    ;
     function __await(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     }
@@ -330,21 +316,18 @@
     function __importDefault(mod) {
         return (mod && mod.__esModule) ? mod : { default: mod };
     }
-    function __classPrivateFieldGet(receiver, state, kind, f) {
-        if (kind === "a" && !f)
-            throw new TypeError("Private accessor was defined without a getter");
-        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
-            throw new TypeError("Cannot read private member from an object whose class did not declare it");
-        return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
+    function __classPrivateFieldGet(receiver, privateMap) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to get private field on non-instance");
+        }
+        return privateMap.get(receiver);
     }
-    function __classPrivateFieldSet(receiver, state, value, kind, f) {
-        if (kind === "m")
-            throw new TypeError("Private method is not writable");
-        if (kind === "a" && !f)
-            throw new TypeError("Private accessor was defined without a setter");
-        if (typeof state === "function" ? receiver !== state || !f : !state.has(receiver))
-            throw new TypeError("Cannot write private member to an object whose class did not declare it");
-        return (kind === "a" ? f.call(receiver, value) : f ? f.value = value : state.set(receiver, value)), value;
+    function __classPrivateFieldSet(receiver, privateMap, value) {
+        if (!privateMap.has(receiver)) {
+            throw new TypeError("attempted to set private field on non-instance");
+        }
+        privateMap.set(receiver, value);
+        return value;
     }
 
     var cache = {};
@@ -363,14 +346,12 @@
         return id();
     }
 
-    exports.Orientation = void 0;
     (function (Orientation) {
         Orientation["LEFT_TO_RIGHT"] = "LR";
         Orientation["RIGHT_TO_LEFT"] = "RL";
         Orientation["TOP_TO_BOTTOM"] = "TB";
         Orientation["BOTTOM_TO_TOM"] = "BT";
     })(exports.Orientation || (exports.Orientation = {}));
-    exports.Alignment = void 0;
     (function (Alignment) {
         Alignment["CENTER"] = "C";
         Alignment["UP_LEFT"] = "UL";
@@ -394,7 +375,7 @@
         }
         DagreLayout.prototype.run = function (graph) {
             this.createDagreGraph(graph);
-            dagre__namespace.layout(this.dagreGraph);
+            dagre.layout(this.dagreGraph);
             graph.edgeLabels = this.dagreGraph._edgeLabels;
             var _loop_1 = function (dagreNodeId) {
                 var dagreNode = this_1.dagreGraph._nodes[dagreNodeId];
@@ -434,7 +415,7 @@
         DagreLayout.prototype.createDagreGraph = function (graph) {
             var e_1, _a, e_2, _b;
             var settings = Object.assign({}, this.defaultSettings, this.settings);
-            this.dagreGraph = new dagre__namespace.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
+            this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
             this.dagreGraph.setGraph({
                 rankdir: settings.orientation,
                 marginx: settings.marginX,
@@ -530,7 +511,7 @@
         DagreClusterLayout.prototype.run = function (graph) {
             var _this = this;
             this.createDagreGraph(graph);
-            dagre__namespace.layout(this.dagreGraph);
+            dagre.layout(this.dagreGraph);
             graph.edgeLabels = this.dagreGraph._edgeLabels;
             var dagreToOutput = function (node) {
                 var dagreNode = _this.dagreGraph._nodes[node.id];
@@ -567,7 +548,7 @@
             var e_1, _a, e_2, _b, e_3, _c;
             var _this = this;
             var settings = Object.assign({}, this.defaultSettings, this.settings);
-            this.dagreGraph = new dagre__namespace.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
+            this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
             this.dagreGraph.setGraph({
                 rankdir: settings.orientation,
                 marginx: settings.marginX,
@@ -681,7 +662,7 @@
         DagreNodesOnlyLayout.prototype.run = function (graph) {
             var e_1, _a;
             this.createDagreGraph(graph);
-            dagre__namespace.layout(this.dagreGraph);
+            dagre.layout(this.dagreGraph);
             graph.edgeLabels = this.dagreGraph._edgeLabels;
             var _loop_1 = function (dagreNodeId) {
                 var dagreNode = this_1.dagreGraph._nodes[dagreNodeId];
@@ -755,7 +736,7 @@
         DagreNodesOnlyLayout.prototype.createDagreGraph = function (graph) {
             var e_2, _a, e_3, _b;
             var settings = Object.assign({}, this.defaultSettings, this.settings);
-            this.dagreGraph = new dagre__namespace.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
+            this.dagreGraph = new dagre.graphlib.Graph({ compound: settings.compound, multigraph: settings.multigraph });
             this.dagreGraph.setGraph({
                 rankdir: settings.orientation,
                 marginx: settings.marginX,
@@ -859,8 +840,8 @@
             var _this = this;
             this.inputGraph = graph;
             this.d3Graph = {
-                nodes: __spreadArray([], __read(this.inputGraph.nodes.map(function (n) { return (Object.assign({}, n)); }))),
-                edges: __spreadArray([], __read(this.inputGraph.edges.map(function (e) { return (Object.assign({}, e)); })))
+                nodes: __spread(this.inputGraph.nodes.map(function (n) { return (Object.assign({}, n)); })),
+                edges: __spread(this.inputGraph.edges.map(function (e) { return (Object.assign({}, e)); }))
             };
             this.outputGraph = {
                 nodes: [],
@@ -967,7 +948,8 @@
                     .avoidOverlaps(true),
                 viewDimensions: {
                     width: 600,
-                    height: 600
+                    height: 600,
+                    xOffset: 0
                 }
             };
             this.settings = {};
@@ -980,8 +962,8 @@
                 this.inputGraph.clusters = [];
             }
             this.internalGraph = {
-                nodes: __spreadArray([], __read(this.inputGraph.nodes.map(function (n) { return (Object.assign(Object.assign({}, n), { width: n.dimension ? n.dimension.width : 20, height: n.dimension ? n.dimension.height : 20 })); }))),
-                groups: __spreadArray([], __read(this.inputGraph.clusters.map(function (cluster) { return ({
+                nodes: __spread(this.inputGraph.nodes.map(function (n) { return (Object.assign(Object.assign({}, n), { width: n.dimension ? n.dimension.width : 20, height: n.dimension ? n.dimension.height : 20 })); })),
+                groups: __spread(this.inputGraph.clusters.map(function (cluster) { return ({
                     padding: 5,
                     groups: cluster.childNodeIds
                         .map(function (nodeId) { return _this.inputGraph.clusters.findIndex(function (node) { return node.id === nodeId; }); })
@@ -989,8 +971,8 @@
                     leaves: cluster.childNodeIds
                         .map(function (nodeId) { return _this.inputGraph.nodes.findIndex(function (node) { return node.id === nodeId; }); })
                         .filter(function (x) { return x >= 0; })
-                }); }))),
-                links: __spreadArray([], __read(this.inputGraph.edges
+                }); })),
+                links: __spread(this.inputGraph.edges
                     .map(function (e) {
                     var sourceNodeIndex = _this.inputGraph.nodes.findIndex(function (node) { return e.source === node.id; });
                     var targetNodeIndex = _this.inputGraph.nodes.findIndex(function (node) { return e.target === node.id; });
@@ -999,8 +981,8 @@
                     }
                     return Object.assign(Object.assign({}, e), { source: sourceNodeIndex, target: targetNodeIndex });
                 })
-                    .filter(function (x) { return !!x; }))),
-                groupLinks: __spreadArray([], __read(this.inputGraph.edges
+                    .filter(function (x) { return !!x; })),
+                groupLinks: __spread(this.inputGraph.edges
                     .map(function (e) {
                     var sourceNodeIndex = _this.inputGraph.nodes.findIndex(function (node) { return e.source === node.id; });
                     var targetNodeIndex = _this.inputGraph.nodes.findIndex(function (node) { return e.target === node.id; });
@@ -1009,7 +991,7 @@
                     }
                     return e;
                 })
-                    .filter(function (x) { return !!x; })))
+                    .filter(function (x) { return !!x; }))
             };
             this.outputGraph = {
                 nodes: [],
@@ -1152,14 +1134,12 @@
         { type: core.Injectable }
     ];
 
-    exports.PanningAxis = void 0;
     (function (PanningAxis) {
         PanningAxis["Both"] = "both";
         PanningAxis["Horizontal"] = "horizontal";
         PanningAxis["Vertical"] = "vertical";
     })(exports.PanningAxis || (exports.PanningAxis = {}));
 
-    exports.MiniMapPosition = void 0;
     (function (MiniMapPosition) {
         MiniMapPosition["UpperLeft"] = "UpperLeft";
         MiniMapPosition["UpperRight"] = "UpperRight";
@@ -1236,430 +1216,59 @@
         };
     }
 
-    var colorSets = [
-        {
-            name: 'vivid',
-            selectable: true,
-            group: 'Ordinal',
-            domain: [
-                '#647c8a',
-                '#3f51b5',
-                '#2196f3',
-                '#00b862',
-                '#afdf0a',
-                '#a7b61a',
-                '#f3e562',
-                '#ff9800',
-                '#ff5722',
-                '#ff4514'
-            ]
-        },
-        {
-            name: 'natural',
-            selectable: true,
-            group: 'Ordinal',
-            domain: [
-                '#bf9d76',
-                '#e99450',
-                '#d89f59',
-                '#f2dfa7',
-                '#a5d7c6',
-                '#7794b1',
-                '#afafaf',
-                '#707160',
-                '#ba9383',
-                '#d9d5c3'
-            ]
-        },
-        {
-            name: 'cool',
-            selectable: true,
-            group: 'Ordinal',
-            domain: [
-                '#a8385d',
-                '#7aa3e5',
-                '#a27ea8',
-                '#aae3f5',
-                '#adcded',
-                '#a95963',
-                '#8796c0',
-                '#7ed3ed',
-                '#50abcc',
-                '#ad6886'
-            ]
-        },
-        {
-            name: 'fire',
-            selectable: true,
-            group: 'Ordinal',
-            domain: ['#ff3d00', '#bf360c', '#ff8f00', '#ff6f00', '#ff5722', '#e65100', '#ffca28', '#ffab00']
-        },
-        {
-            name: 'solar',
-            selectable: true,
-            group: 'Continuous',
-            domain: [
-                '#fff8e1',
-                '#ffecb3',
-                '#ffe082',
-                '#ffd54f',
-                '#ffca28',
-                '#ffc107',
-                '#ffb300',
-                '#ffa000',
-                '#ff8f00',
-                '#ff6f00'
-            ]
-        },
-        {
-            name: 'air',
-            selectable: true,
-            group: 'Continuous',
-            domain: [
-                '#e1f5fe',
-                '#b3e5fc',
-                '#81d4fa',
-                '#4fc3f7',
-                '#29b6f6',
-                '#03a9f4',
-                '#039be5',
-                '#0288d1',
-                '#0277bd',
-                '#01579b'
-            ]
-        },
-        {
-            name: 'aqua',
-            selectable: true,
-            group: 'Continuous',
-            domain: [
-                '#e0f7fa',
-                '#b2ebf2',
-                '#80deea',
-                '#4dd0e1',
-                '#26c6da',
-                '#00bcd4',
-                '#00acc1',
-                '#0097a7',
-                '#00838f',
-                '#006064'
-            ]
-        },
-        {
-            name: 'flame',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#A10A28',
-                '#D3342D',
-                '#EF6D49',
-                '#FAAD67',
-                '#FDDE90',
-                '#DBED91',
-                '#A9D770',
-                '#6CBA67',
-                '#2C9653',
-                '#146738'
-            ]
-        },
-        {
-            name: 'ocean',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#1D68FB',
-                '#33C0FC',
-                '#4AFFFE',
-                '#AFFFFF',
-                '#FFFC63',
-                '#FDBD2D',
-                '#FC8A25',
-                '#FA4F1E',
-                '#FA141B',
-                '#BA38D1'
-            ]
-        },
-        {
-            name: 'forest',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#55C22D',
-                '#C1F33D',
-                '#3CC099',
-                '#AFFFFF',
-                '#8CFC9D',
-                '#76CFFA',
-                '#BA60FB',
-                '#EE6490',
-                '#C42A1C',
-                '#FC9F32'
-            ]
-        },
-        {
-            name: 'horizon',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#2597FB',
-                '#65EBFD',
-                '#99FDD0',
-                '#FCEE4B',
-                '#FEFCFA',
-                '#FDD6E3',
-                '#FCB1A8',
-                '#EF6F7B',
-                '#CB96E8',
-                '#EFDEE0'
-            ]
-        },
-        {
-            name: 'neons',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#FF3333',
-                '#FF33FF',
-                '#CC33FF',
-                '#0000FF',
-                '#33CCFF',
-                '#33FFFF',
-                '#33FF66',
-                '#CCFF33',
-                '#FFCC00',
-                '#FF6600'
-            ]
-        },
-        {
-            name: 'picnic',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#FAC51D',
-                '#66BD6D',
-                '#FAA026',
-                '#29BB9C',
-                '#E96B56',
-                '#55ACD2',
-                '#B7332F',
-                '#2C83C9',
-                '#9166B8',
-                '#92E7E8'
-            ]
-        },
-        {
-            name: 'night',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#2B1B5A',
-                '#501356',
-                '#183356',
-                '#28203F',
-                '#391B3C',
-                '#1E2B3C',
-                '#120634',
-                '#2D0432',
-                '#051932',
-                '#453080',
-                '#75267D',
-                '#2C507D',
-                '#4B3880',
-                '#752F7D',
-                '#35547D'
-            ]
-        },
-        {
-            name: 'nightLights',
-            selectable: false,
-            group: 'Ordinal',
-            domain: [
-                '#4e31a5',
-                '#9c25a7',
-                '#3065ab',
-                '#57468b',
-                '#904497',
-                '#46648b',
-                '#32118d',
-                '#a00fb3',
-                '#1052a2',
-                '#6e51bd',
-                '#b63cc3',
-                '#6c97cb',
-                '#8671c1',
-                '#b455be',
-                '#7496c3'
-            ]
-        }
-    ];
-
-    var ColorHelper = /** @class */ (function () {
-        function ColorHelper(scheme, domain, customColors) {
-            if (typeof scheme === 'string') {
-                scheme = colorSets.find(function (cs) {
-                    return cs.name === scheme;
-                });
-            }
-            this.colorDomain = scheme.domain;
-            this.domain = domain;
-            this.customColors = customColors;
-            this.scale = this.generateColorScheme(scheme, this.domain);
-        }
-        ColorHelper.prototype.generateColorScheme = function (scheme, domain) {
-            if (typeof scheme === 'string') {
-                scheme = colorSets.find(function (cs) {
-                    return cs.name === scheme;
-                });
-            }
-            return d3Scale.scaleOrdinal().range(scheme.domain).domain(domain);
-        };
-        ColorHelper.prototype.getColor = function (value) {
-            if (value === undefined || value === null) {
-                throw new Error('Value can not be null');
-            }
-            if (typeof this.customColors === 'function') {
-                return this.customColors(value);
-            }
-            var formattedValue = value.toString();
-            var found; // todo type customColors
-            if (this.customColors && this.customColors.length > 0) {
-                found = this.customColors.find(function (mapping) {
-                    return mapping.name.toLowerCase() === formattedValue.toLowerCase();
-                });
-            }
-            if (found) {
-                return found.value;
-            }
-            else {
-                return this.scale(value);
-            }
-        };
-        return ColorHelper;
-    }());
-
-    function calculateViewDimensions(_a) {
-        var width = _a.width, height = _a.height;
-        var chartWidth = width;
-        var chartHeight = height;
-        chartWidth = Math.max(0, chartWidth);
-        chartHeight = Math.max(0, chartHeight);
-        return {
-            width: Math.floor(chartWidth),
-            height: Math.floor(chartHeight)
-        };
-    }
-
-    /**
-     * Visibility Observer
-     */
-    var VisibilityObserver = /** @class */ (function () {
-        function VisibilityObserver(element, zone) {
-            this.element = element;
-            this.zone = zone;
-            this.visible = new core.EventEmitter();
-            this.isVisible = false;
-            this.runCheck();
-        }
-        VisibilityObserver.prototype.destroy = function () {
-            clearTimeout(this.timeout);
-        };
-        VisibilityObserver.prototype.onVisibilityChange = function () {
-            var _this = this;
-            // trigger zone recalc for columns
-            this.zone.run(function () {
-                _this.isVisible = true;
-                _this.visible.emit(true);
-            });
-        };
-        VisibilityObserver.prototype.runCheck = function () {
-            var _this = this;
-            var check = function () {
-                if (!_this.element) {
-                    return;
-                }
-                // https://davidwalsh.name/offsetheight-visibility
-                var _a = _this.element.nativeElement, offsetHeight = _a.offsetHeight, offsetWidth = _a.offsetWidth;
-                if (offsetHeight && offsetWidth) {
-                    clearTimeout(_this.timeout);
-                    _this.onVisibilityChange();
-                }
-                else {
-                    clearTimeout(_this.timeout);
-                    _this.zone.runOutsideAngular(function () {
-                        _this.timeout = setTimeout(function () { return check(); }, 100);
-                    });
-                }
-            };
-            this.zone.runOutsideAngular(function () {
-                _this.timeout = setTimeout(function () { return check(); });
-            });
-        };
-        return VisibilityObserver;
-    }());
-    VisibilityObserver.decorators = [
-        { type: core.Directive, args: [{
-                    // tslint:disable-next-line:directive-selector
-                    selector: 'visibility-observer'
-                },] }
-    ];
-    VisibilityObserver.ctorParameters = function () { return [
-        { type: core.ElementRef },
-        { type: core.NgZone }
-    ]; };
-    VisibilityObserver.propDecorators = {
-        visible: [{ type: core.Output }]
-    };
-
-    var GraphComponent = /** @class */ (function () {
+    var GraphComponent = /** @class */ (function (_super) {
+        __extends(GraphComponent, _super);
         function GraphComponent(el, zone, cd, layoutService) {
-            this.el = el;
-            this.zone = zone;
-            this.cd = cd;
-            this.layoutService = layoutService;
-            this.nodes = [];
-            this.clusters = [];
-            this.links = [];
-            this.activeEntries = [];
-            this.draggingEnabled = true;
-            this.panningEnabled = true;
-            this.panningAxis = exports.PanningAxis.Both;
-            this.enableZoom = true;
-            this.zoomSpeed = 0.1;
-            this.minZoomLevel = 0.1;
-            this.maxZoomLevel = 4.0;
-            this.autoZoom = false;
-            this.panOnZoom = true;
-            this.animate = false;
-            this.autoCenter = false;
-            this.enableTrackpadSupport = false;
-            this.showMiniMap = false;
-            this.miniMapMaxWidth = 100;
-            this.miniMapPosition = exports.MiniMapPosition.UpperRight;
-            this.scheme = 'cool';
-            this.animations = true;
-            this.select = new core.EventEmitter();
-            this.activate = new core.EventEmitter();
-            this.deactivate = new core.EventEmitter();
-            this.zoomChange = new core.EventEmitter();
-            this.clickHandler = new core.EventEmitter();
-            this.isMouseMoveCalled = false;
-            this.graphSubscription = new rxjs.Subscription();
-            this.subscriptions = [];
-            this.isPanning = false;
-            this.isDragging = false;
-            this.initialized = false;
-            this.graphDims = { width: 0, height: 0 };
-            this._oldLinks = [];
-            this.oldNodes = new Set();
-            this.oldClusters = new Set();
-            this.transformationMatrix = transformationMatrix.identity();
-            this._touchLastX = null;
-            this._touchLastY = null;
-            this.minimapScaleCoefficient = 3;
-            this.minimapOffsetX = 0;
-            this.minimapOffsetY = 0;
-            this.isMinimapPanning = false;
-            this.groupResultsBy = function (node) { return node.label; };
+            var _this = _super.call(this, el, zone, cd) || this;
+            _this.el = el;
+            _this.zone = zone;
+            _this.cd = cd;
+            _this.layoutService = layoutService;
+            _this.legend = false;
+            _this.nodes = [];
+            _this.clusters = [];
+            _this.links = [];
+            _this.activeEntries = [];
+            _this.draggingEnabled = true;
+            _this.panningEnabled = true;
+            _this.panningAxis = exports.PanningAxis.Both;
+            _this.enableZoom = true;
+            _this.zoomSpeed = 0.1;
+            _this.minZoomLevel = 0.1;
+            _this.maxZoomLevel = 4.0;
+            _this.autoZoom = false;
+            _this.panOnZoom = true;
+            _this.animate = false;
+            _this.autoCenter = false;
+            _this.enableTrackpadSupport = false;
+            _this.showMiniMap = false;
+            _this.miniMapMaxWidth = 100;
+            _this.miniMapPosition = exports.MiniMapPosition.UpperRight;
+            _this.activate = new core.EventEmitter();
+            _this.deactivate = new core.EventEmitter();
+            _this.zoomChange = new core.EventEmitter();
+            _this.clickHandler = new core.EventEmitter();
+            _this.isMouseMoveCalled = false;
+            _this.graphSubscription = new rxjs.Subscription();
+            _this.subscriptions = [];
+            _this.margin = [0, 0, 0, 0];
+            _this.results = [];
+            _this.isPanning = false;
+            _this.isDragging = false;
+            _this.initialized = false;
+            _this.graphDims = { width: 0, height: 0 };
+            _this._oldLinks = [];
+            _this.oldNodes = new Set();
+            _this.oldClusters = new Set();
+            _this.transformationMatrix = transformationMatrix.identity();
+            _this._touchLastX = null;
+            _this._touchLastY = null;
+            _this.minimapScaleCoefficient = 3;
+            _this.minimapOffsetX = 0;
+            _this.minimapOffsetY = 0;
+            _this.isMinimapPanning = false;
+            _this.groupResultsBy = function (node) { return node.label; };
+            return _this;
         }
         Object.defineProperty(GraphComponent.prototype, "zoomLevel", {
             /**
@@ -1740,7 +1349,6 @@
             this.minimapClipPathId = "minimapClip" + id();
         };
         GraphComponent.prototype.ngOnChanges = function (changes) {
-            this.basicUpdate();
             var layout = changes.layout, layoutSettings = changes.layoutSettings, nodes = changes.nodes, clusters = changes.clusters, links = changes.links;
             this.setLayout(this.layout);
             if (layoutSettings) {
@@ -1771,11 +1379,7 @@
          */
         GraphComponent.prototype.ngOnDestroy = function () {
             var e_1, _c;
-            this.unbindEvents();
-            if (this.visibilityObserver) {
-                this.visibilityObserver.visible.unsubscribe();
-                this.visibilityObserver.destroy();
-            }
+            _super.prototype.ngOnDestroy.call(this);
             try {
                 for (var _d = __values(this.subscriptions), _e = _d.next(); !_e.done; _e = _d.next()) {
                     var sub = _e.value;
@@ -1799,10 +1403,7 @@
          */
         GraphComponent.prototype.ngAfterViewInit = function () {
             var _this = this;
-            this.bindWindowResizeEvent();
-            // listen for visibility of the element for hidden by default scenario
-            this.visibilityObserver = new VisibilityObserver(this.el, this.zone);
-            this.visibilityObserver.visible.subscribe(this.update.bind(this));
+            _super.prototype.ngAfterViewInit.call(this);
             setTimeout(function () { return _this.update(); });
         };
         /**
@@ -1812,17 +1413,20 @@
          */
         GraphComponent.prototype.update = function () {
             var _this = this;
-            this.basicUpdate();
+            _super.prototype.update.call(this);
             if (!this.curve) {
-                this.curve = shape__namespace.curveBundle.beta(1);
+                this.curve = shape.curveBundle.beta(1);
             }
             this.zone.run(function () {
-                _this.dims = calculateViewDimensions({
+                _this.dims = ngxCharts.calculateViewDimensions({
                     width: _this.width,
-                    height: _this.height
+                    height: _this.height,
+                    margins: _this.margin,
+                    showLegend: _this.legend
                 });
                 _this.seriesDomain = _this.getSeriesDomain();
                 _this.setColors();
+                _this.legendOptions = _this.getLegendOptions();
                 _this.createGraph();
                 _this.updateTransform();
                 _this.initialized = true;
@@ -1862,10 +1466,10 @@
                 return n;
             };
             this.graph = {
-                nodes: this.nodes.length > 0 ? __spreadArray([], __read(this.nodes)).map(initializeNode) : [],
-                clusters: this.clusters && this.clusters.length > 0 ? __spreadArray([], __read(this.clusters)).map(initializeNode) : [],
+                nodes: this.nodes.length > 0 ? __spread(this.nodes).map(initializeNode) : [],
+                clusters: this.clusters && this.clusters.length > 0 ? __spread(this.clusters).map(initializeNode) : [],
                 edges: this.links.length > 0
-                    ? __spreadArray([], __read(this.links)).map(function (e) {
+                    ? __spread(this.links).map(function (e) {
                         if (!e.id) {
                             e.id = id();
                         }
@@ -2015,7 +1619,15 @@
                 maxX = node.position.x + node.dimension.width > maxX ? node.position.x + node.dimension.width : maxX;
                 maxY = node.position.y + node.dimension.height > maxY ? node.position.y + node.dimension.height : maxY;
             }
-            if (this.showMiniMap) {
+            // When clusters are present, leave room around the graph
+            // to account for height and width they can add to the dimensions.
+            // Iterating through the graph clusters and min/maxing
+            // their position and dimension didn't work.
+            // The graph calculated size was still too low and some nodes
+            // were rendered outside of the view when using zoomToFit.
+            // Without clusters, using dagre, the extra spacing all around
+            // causes the graph to be shifted up/left instead of being centered.
+            if (this.graph.clusters.length > 0) {
                 minX -= 100;
                 minY -= 100;
                 maxX += 100;
@@ -2150,14 +1762,14 @@
                     linkSelection
                         .attr('d', edge.oldLine)
                         .transition()
-                        .ease(ease__namespace.easeSinInOut)
+                        .ease(ease.easeSinInOut)
                         .duration(_animate ? 500 : 0)
                         .attr('d', edge.line);
-                    var textPathSelection = d3Selection.select(_this.el.nativeElement).select("#" + edge.id);
+                    var textPathSelection = d3Selection.select(_this.chartElement.nativeElement).select("#" + edge.id);
                     textPathSelection
                         .attr('d', edge.oldTextPath)
                         .transition()
-                        .ease(ease__namespace.easeSinInOut)
+                        .ease(ease.easeSinInOut)
                         .duration(_animate ? 500 : 0)
                         .attr('d', edge.textPath);
                     _this.updateMidpointOnEdge(edge, edge.points);
@@ -2176,7 +1788,7 @@
             if (lastPoint.x < firstPoint.x) {
                 link.dominantBaseline = 'text-before-edge';
                 // reverse text path for when its flipped upside down
-                link.textPath = this.generateLine(__spreadArray([], __read(link.points)).reverse());
+                link.textPath = this.generateLine(__spread(link.points).reverse());
             }
             else {
                 link.dominantBaseline = 'text-after-edge';
@@ -2189,8 +1801,7 @@
          * @memberOf GraphComponent
          */
         GraphComponent.prototype.generateLine = function (points) {
-            var lineFunction = shape__namespace
-                .line()
+            var lineFunction = shape.line()
                 .x(function (d) { return d.x; })
                 .y(function (d) { return d.y; })
                 .curve(this.curve);
@@ -2221,7 +1832,7 @@
                 var mouseX = $event.clientX;
                 var mouseY = $event.clientY;
                 // Transform the mouse X/Y into a SVG X/Y
-                var svg = this.el.nativeElement.querySelector('svg');
+                var svg = this.chart.nativeElement.querySelector('svg');
                 var svgGroup = svg.querySelector('g.chart');
                 var point = svg.createSVGPoint();
                 point.x = mouseX;
@@ -2368,7 +1979,7 @@
             if (this.activeEntries.indexOf(event) > -1) {
                 return;
             }
-            this.activeEntries = __spreadArray([event], __read(this.activeEntries));
+            this.activeEntries = __spread([event], this.activeEntries);
             this.activate.emit({ value: event, entries: this.activeEntries });
         };
         /**
@@ -2379,7 +1990,7 @@
         GraphComponent.prototype.onDeactivate = function (event) {
             var idx = this.activeEntries.indexOf(event);
             this.activeEntries.splice(idx, 1);
-            this.activeEntries = __spreadArray([], __read(this.activeEntries));
+            this.activeEntries = __spread(this.activeEntries);
             this.deactivate.emit({ value: event, entries: this.activeEntries });
         };
         /**
@@ -2419,7 +2030,19 @@
          * @memberOf GraphComponent
          */
         GraphComponent.prototype.setColors = function () {
-            this.colors = new ColorHelper(this.scheme, this.seriesDomain, this.customColors);
+            this.colors = new ngxCharts.ColorHelper(this.scheme, 'ordinal', this.seriesDomain, this.customColors);
+        };
+        /**
+         * Gets the legend options
+         *
+         * @memberOf GraphComponent
+         */
+        GraphComponent.prototype.getLegendOptions = function () {
+            return {
+                scaleType: 'ordinal',
+                domain: this.seriesDomain,
+                colors: this.colors
+            };
         };
         /**
          * On mouse move event, used for panning and dragging.
@@ -2599,76 +2222,15 @@
                 };
             }
         };
-        GraphComponent.prototype.basicUpdate = function () {
-            if (this.view) {
-                this.width = this.view[0];
-                this.height = this.view[1];
-            }
-            else {
-                var dims = this.getContainerDims();
-                if (dims) {
-                    this.width = dims.width;
-                    this.height = dims.height;
-                }
-            }
-            // default values if width or height are 0 or undefined
-            if (!this.width) {
-                this.width = 600;
-            }
-            if (!this.height) {
-                this.height = 400;
-            }
-            this.width = Math.floor(this.width);
-            this.height = Math.floor(this.height);
-            if (this.cd) {
-                this.cd.markForCheck();
-            }
-        };
-        GraphComponent.prototype.getContainerDims = function () {
-            var width;
-            var height;
-            var hostElem = this.el.nativeElement;
-            if (hostElem.parentNode !== null) {
-                // Get the container dimensions
-                var dims = hostElem.parentNode.getBoundingClientRect();
-                width = dims.width;
-                height = dims.height;
-            }
-            if (width && height) {
-                return { width: width, height: height };
-            }
-            return null;
-        };
-        GraphComponent.prototype.unbindEvents = function () {
-            if (this.resizeSubscription) {
-                this.resizeSubscription.unsubscribe();
-            }
-        };
-        GraphComponent.prototype.bindWindowResizeEvent = function () {
-            var _this = this;
-            var source = rxjs.fromEvent(window, 'resize');
-            var subscription = source.pipe(operators.debounceTime(200)).subscribe(function (e) {
-                _this.update();
-                if (_this.cd) {
-                    _this.cd.markForCheck();
-                }
-            });
-            this.resizeSubscription = subscription;
-        };
         return GraphComponent;
-    }());
+    }(ngxCharts.BaseChartComponent));
     GraphComponent.decorators = [
         { type: core.Component, args: [{
                     selector: 'ngx-graph',
-                    template: "<div\n  class=\"ngx-charts-outer\"\n  [style.width.px]=\"width\"\n  [@animationState]=\"'active'\"\n  [@.disabled]=\"!animations\"\n  (mouseWheelUp)=\"onZoom($event, 'in')\"\n  (mouseWheelDown)=\"onZoom($event, 'out')\"\n  mouseWheel\n>\n  <svg:svg class=\"ngx-charts\" [attr.width]=\"width\" [attr.height]=\"height\">\n    <svg:g\n      *ngIf=\"initialized && graph\"\n      [attr.transform]=\"transform\"\n      (touchstart)=\"onTouchStart($event)\"\n      (touchend)=\"onTouchEnd($event)\"\n      class=\"graph chart\"\n    >\n      <defs>\n        <ng-container *ngIf=\"defsTemplate\" [ngTemplateOutlet]=\"defsTemplate\"></ng-container>\n        <svg:path\n          class=\"text-path\"\n          *ngFor=\"let link of graph.edges\"\n          [attr.d]=\"link.textPath\"\n          [attr.id]=\"link.id\"\n        ></svg:path>\n      </defs>\n\n      <svg:rect\n        class=\"panning-rect\"\n        [attr.width]=\"dims.width * 100\"\n        [attr.height]=\"dims.height * 100\"\n        [attr.transform]=\"'translate(' + (-dims.width || 0) * 50 + ',' + (-dims.height || 0) * 50 + ')'\"\n        (mousedown)=\"isPanning = true\"\n      />\n\n      <ng-content></ng-content>\n\n      <svg:g class=\"clusters\">\n        <svg:g\n          #clusterElement\n          *ngFor=\"let node of graph.clusters; trackBy: trackNodeBy\"\n          class=\"node-group\"\n          [class.old-node]=\"animate && oldClusters.has(node.id)\"\n          [id]=\"node.id\"\n          [attr.transform]=\"node.transform\"\n          (click)=\"onClick(node)\"\n        >\n          <ng-container\n            *ngIf=\"clusterTemplate\"\n            [ngTemplateOutlet]=\"clusterTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <svg:g *ngIf=\"!clusterTemplate\" class=\"node cluster\">\n            <svg:rect\n              [attr.width]=\"node.dimension.width\"\n              [attr.height]=\"node.dimension.height\"\n              [attr.fill]=\"node.data?.color\"\n            />\n            <svg:text alignment-baseline=\"central\" [attr.x]=\"10\" [attr.y]=\"node.dimension.height / 2\">\n              {{ node.label }}\n            </svg:text>\n          </svg:g>\n        </svg:g>\n      </svg:g>\n\n      <svg:g class=\"links\">\n        <svg:g #linkElement *ngFor=\"let link of graph.edges; trackBy: trackLinkBy\" class=\"link-group\" [id]=\"link.id\">\n          <ng-container\n            *ngIf=\"linkTemplate\"\n            [ngTemplateOutlet]=\"linkTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: link }\"\n          ></ng-container>\n          <svg:path *ngIf=\"!linkTemplate\" class=\"edge\" [attr.d]=\"link.line\" />\n        </svg:g>\n      </svg:g>\n\n      <svg:g class=\"nodes\">\n        <svg:g\n          #nodeElement\n          *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n          class=\"node-group\"\n          [class.old-node]=\"animate && oldNodes.has(node.id)\"\n          [id]=\"node.id\"\n          [attr.transform]=\"node.transform\"\n          (click)=\"onClick(node)\"\n          (mousedown)=\"onNodeMouseDown($event, node)\"\n        >\n          <ng-container\n            *ngIf=\"nodeTemplate\"\n            [ngTemplateOutlet]=\"nodeTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <svg:circle\n            *ngIf=\"!nodeTemplate\"\n            r=\"10\"\n            [attr.cx]=\"node.dimension.width / 2\"\n            [attr.cy]=\"node.dimension.height / 2\"\n            [attr.fill]=\"node.data?.color\"\n          />\n        </svg:g>\n      </svg:g>\n    </svg:g>\n\n    <svg:clipPath [attr.id]=\"minimapClipPathId\">\n      <svg:rect\n        [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n        [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n      ></svg:rect>\n    </svg:clipPath>\n\n    <svg:g\n      class=\"minimap\"\n      *ngIf=\"showMiniMap\"\n      [attr.transform]=\"minimapTransform\"\n      [attr.clip-path]=\"'url(#' + minimapClipPathId + ')'\"\n    >\n      <svg:rect\n        class=\"minimap-background\"\n        [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n        [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n        (mousedown)=\"onMinimapPanTo($event)\"\n      ></svg:rect>\n\n      <svg:g\n        [style.transform]=\"\n          'translate(' +\n          -minimapOffsetX / minimapScaleCoefficient +\n          'px,' +\n          -minimapOffsetY / minimapScaleCoefficient +\n          'px)'\n        \"\n      >\n        <svg:g class=\"minimap-nodes\" [style.transform]=\"'scale(' + 1 / minimapScaleCoefficient + ')'\">\n          <svg:g\n            #nodeElement\n            *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n            class=\"node-group\"\n            [class.old-node]=\"animate && oldNodes.has(node.id)\"\n            [id]=\"node.id\"\n            [attr.transform]=\"node.transform\"\n          >\n            <ng-container\n              *ngIf=\"miniMapNodeTemplate\"\n              [ngTemplateOutlet]=\"miniMapNodeTemplate\"\n              [ngTemplateOutletContext]=\"{ $implicit: node }\"\n            ></ng-container>\n            <ng-container\n              *ngIf=\"!miniMapNodeTemplate && nodeTemplate\"\n              [ngTemplateOutlet]=\"nodeTemplate\"\n              [ngTemplateOutletContext]=\"{ $implicit: node }\"\n            ></ng-container>\n            <svg:circle\n              *ngIf=\"!nodeTemplate && !miniMapNodeTemplate\"\n              r=\"10\"\n              [attr.cx]=\"node.dimension.width / 2 / minimapScaleCoefficient\"\n              [attr.cy]=\"node.dimension.height / 2 / minimapScaleCoefficient\"\n              [attr.fill]=\"node.data?.color\"\n            />\n          </svg:g>\n        </svg:g>\n\n        <svg:rect\n          [attr.transform]=\"\n            'translate(' +\n            panOffsetX / zoomLevel / -minimapScaleCoefficient +\n            ',' +\n            panOffsetY / zoomLevel / -minimapScaleCoefficient +\n            ')'\n          \"\n          class=\"minimap-drag\"\n          [class.panning]=\"isMinimapPanning\"\n          [attr.width]=\"width / minimapScaleCoefficient / zoomLevel\"\n          [attr.height]=\"height / minimapScaleCoefficient / zoomLevel\"\n          (mousedown)=\"onMinimapDragMouseDown()\"\n        ></svg:rect>\n      </svg:g>\n    </svg:g>\n  </svg:svg>\n</div>\n",
+                    template: "<ngx-charts-chart\n  [view]=\"[width, height]\"\n  [showLegend]=\"legend\"\n  [legendOptions]=\"legendOptions\"\n  (legendLabelClick)=\"onClick($event)\"\n  (legendLabelActivate)=\"onActivate($event)\"\n  (legendLabelDeactivate)=\"onDeactivate($event)\"\n  mouseWheel\n  (mouseWheelUp)=\"onZoom($event, 'in')\"\n  (mouseWheelDown)=\"onZoom($event, 'out')\"\n>\n  <svg:g\n    *ngIf=\"initialized && graph\"\n    [attr.transform]=\"transform\"\n    (touchstart)=\"onTouchStart($event)\"\n    (touchend)=\"onTouchEnd($event)\"\n    class=\"graph chart\"\n  >\n    <defs>\n      <ng-container *ngIf=\"defsTemplate\" [ngTemplateOutlet]=\"defsTemplate\"></ng-container>\n      <svg:path\n        class=\"text-path\"\n        *ngFor=\"let link of graph.edges\"\n        [attr.d]=\"link.textPath\"\n        [attr.id]=\"link.id\"\n      ></svg:path>\n    </defs>\n\n    <svg:rect\n      class=\"panning-rect\"\n      [attr.width]=\"dims.width * 100\"\n      [attr.height]=\"dims.height * 100\"\n      [attr.transform]=\"'translate(' + (-dims.width || 0) * 50 + ',' + (-dims.height || 0) * 50 + ')'\"\n      (mousedown)=\"isPanning = true\"\n    />\n\n    <ng-content></ng-content>\n\n    <svg:g class=\"clusters\">\n      <svg:g\n        #clusterElement\n        *ngFor=\"let node of graph.clusters; trackBy: trackNodeBy\"\n        class=\"node-group\"\n        [class.old-node]=\"animate && oldClusters.has(node.id)\"\n        [id]=\"node.id\"\n        [attr.transform]=\"node.transform\"\n        (click)=\"onClick(node)\"\n      >\n        <ng-container\n          *ngIf=\"clusterTemplate\"\n          [ngTemplateOutlet]=\"clusterTemplate\"\n          [ngTemplateOutletContext]=\"{ $implicit: node }\"\n        ></ng-container>\n        <svg:g *ngIf=\"!clusterTemplate\" class=\"node cluster\">\n          <svg:rect\n            [attr.width]=\"node.dimension.width\"\n            [attr.height]=\"node.dimension.height\"\n            [attr.fill]=\"node.data?.color\"\n          />\n          <svg:text alignment-baseline=\"central\" [attr.x]=\"10\" [attr.y]=\"node.dimension.height / 2\">\n            {{ node.label }}\n          </svg:text>\n        </svg:g>\n      </svg:g>\n    </svg:g>\n\n    <svg:g class=\"links\">\n      <svg:g #linkElement *ngFor=\"let link of graph.edges; trackBy: trackLinkBy\" class=\"link-group\" [id]=\"link.id\">\n        <ng-container\n          *ngIf=\"linkTemplate\"\n          [ngTemplateOutlet]=\"linkTemplate\"\n          [ngTemplateOutletContext]=\"{ $implicit: link }\"\n        ></ng-container>\n        <svg:path *ngIf=\"!linkTemplate\" class=\"edge\" [attr.d]=\"link.line\" />\n      </svg:g>\n    </svg:g>\n\n    <svg:g class=\"nodes\">\n      <svg:g\n        #nodeElement\n        *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n        class=\"node-group\"\n        [class.old-node]=\"animate && oldNodes.has(node.id)\"\n        [id]=\"node.id\"\n        [attr.transform]=\"node.transform\"\n        (click)=\"onClick(node)\"\n        (mousedown)=\"onNodeMouseDown($event, node)\"\n      >\n        <ng-container\n          *ngIf=\"nodeTemplate\"\n          [ngTemplateOutlet]=\"nodeTemplate\"\n          [ngTemplateOutletContext]=\"{ $implicit: node }\"\n        ></ng-container>\n        <svg:circle\n          *ngIf=\"!nodeTemplate\"\n          r=\"10\"\n          [attr.cx]=\"node.dimension.width / 2\"\n          [attr.cy]=\"node.dimension.height / 2\"\n          [attr.fill]=\"node.data?.color\"\n        />\n      </svg:g>\n    </svg:g>\n  </svg:g>\n\n  <svg:clipPath [attr.id]=\"minimapClipPathId\">\n    <svg:rect\n      [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n      [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n    ></svg:rect>\n  </svg:clipPath>\n\n  <svg:g\n    class=\"minimap\"\n    *ngIf=\"showMiniMap\"\n    [attr.transform]=\"minimapTransform\"\n    [attr.clip-path]=\"'url(#' + minimapClipPathId + ')'\"\n  >\n    <svg:rect\n      class=\"minimap-background\"\n      [attr.width]=\"graphDims.width / minimapScaleCoefficient\"\n      [attr.height]=\"graphDims.height / minimapScaleCoefficient\"\n      (mousedown)=\"onMinimapPanTo($event)\"\n    ></svg:rect>\n\n    <svg:g\n      [style.transform]=\"\n        'translate(' +\n        -minimapOffsetX / minimapScaleCoefficient +\n        'px,' +\n        -minimapOffsetY / minimapScaleCoefficient +\n        'px)'\n      \"\n    >\n      <svg:g class=\"minimap-nodes\" [style.transform]=\"'scale(' + 1 / minimapScaleCoefficient + ')'\">\n        <svg:g\n          #nodeElement\n          *ngFor=\"let node of graph.nodes; trackBy: trackNodeBy\"\n          class=\"node-group\"\n          [class.old-node]=\"animate && oldNodes.has(node.id)\"\n          [id]=\"node.id\"\n          [attr.transform]=\"node.transform\"\n        >\n          <ng-container\n            *ngIf=\"miniMapNodeTemplate\"\n            [ngTemplateOutlet]=\"miniMapNodeTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <ng-container\n            *ngIf=\"!miniMapNodeTemplate && nodeTemplate\"\n            [ngTemplateOutlet]=\"nodeTemplate\"\n            [ngTemplateOutletContext]=\"{ $implicit: node }\"\n          ></ng-container>\n          <svg:circle\n            *ngIf=\"!nodeTemplate && !miniMapNodeTemplate\"\n            r=\"10\"\n            [attr.cx]=\"node.dimension.width / 2 / minimapScaleCoefficient\"\n            [attr.cy]=\"node.dimension.height / 2 / minimapScaleCoefficient\"\n            [attr.fill]=\"node.data?.color\"\n          />\n        </svg:g>\n      </svg:g>\n\n      <svg:rect\n        [attr.transform]=\"\n          'translate(' +\n          panOffsetX / zoomLevel / -minimapScaleCoefficient +\n          ',' +\n          panOffsetY / zoomLevel / -minimapScaleCoefficient +\n          ')'\n        \"\n        class=\"minimap-drag\"\n        [class.panning]=\"isMinimapPanning\"\n        [attr.width]=\"width / minimapScaleCoefficient / zoomLevel\"\n        [attr.height]=\"height / minimapScaleCoefficient / zoomLevel\"\n        (mousedown)=\"onMinimapDragMouseDown()\"\n      ></svg:rect>\n    </svg:g>\n  </svg:g>\n</ngx-charts-chart>\n",
                     encapsulation: core.ViewEncapsulation.None,
                     changeDetection: core.ChangeDetectionStrategy.OnPush,
-                    animations: [
-                        animations.trigger('animationState', [
-                            animations.transition(':enter', [animations.style({ opacity: 0 }), animations.animate('500ms 100ms', animations.style({ opacity: 1 }))])
-                        ])
-                    ],
-                    styles: [".minimap .minimap-background{fill:#0000001a}.minimap .minimap-drag{fill:#0003;stroke:#fff;stroke-width:1px;stroke-dasharray:2px;stroke-dashoffset:2px;cursor:pointer}.minimap .minimap-drag.panning{fill:#0000004d}.minimap .minimap-nodes{opacity:.5;pointer-events:none}.graph{-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.graph .edge{stroke:#666;fill:none}.graph .edge .edge-label{stroke:none;font-size:12px;fill:#251e1e}.graph .panning-rect{fill:#0000;cursor:move}.graph .node-group.old-node{transition:transform .5s ease-in-out}.graph .node-group .node:focus{outline:none}.graph .cluster rect{opacity:.2}\n"]
+                    styles: [".minimap .minimap-background{fill:rgba(0,0,0,.1)}.minimap .minimap-drag{cursor:pointer;fill:rgba(0,0,0,.2);stroke:#fff;stroke-dasharray:2px;stroke-dashoffset:2px;stroke-width:1px}.minimap .minimap-drag.panning{fill:rgba(0,0,0,.3)}.minimap .minimap-nodes{opacity:.5;pointer-events:none}.graph{-moz-user-select:none;-ms-user-select:none;-webkit-user-select:none;user-select:none}.graph .edge{fill:none;stroke:#666}.graph .edge .edge-label{fill:#251e1e;font-size:12px;stroke:none}.graph .panning-rect{cursor:move;fill:transparent}.graph .node-group.old-node{transition:transform .5s ease-in-out}.graph .node-group .node:focus{outline:none}.graph .cluster rect{opacity:.2}"]
                 },] }
     ];
     GraphComponent.ctorParameters = function () { return [
@@ -2678,6 +2240,7 @@
         { type: LayoutService }
     ]; };
     GraphComponent.propDecorators = {
+        legend: [{ type: core.Input }],
         nodes: [{ type: core.Input }],
         clusters: [{ type: core.Input }],
         links: [{ type: core.Input }],
@@ -2712,11 +2275,6 @@
         miniMapMaxWidth: [{ type: core.Input }],
         miniMapMaxHeight: [{ type: core.Input }],
         miniMapPosition: [{ type: core.Input }],
-        view: [{ type: core.Input }],
-        scheme: [{ type: core.Input }],
-        customColors: [{ type: core.Input }],
-        animations: [{ type: core.Input }],
-        select: [{ type: core.Output }],
         activate: [{ type: core.Output }],
         deactivate: [{ type: core.Output }],
         zoomChange: [{ type: core.Output }],
@@ -2726,6 +2284,7 @@
         clusterTemplate: [{ type: core.ContentChild, args: ['clusterTemplate',] }],
         defsTemplate: [{ type: core.ContentChild, args: ['defsTemplate',] }],
         miniMapNodeTemplate: [{ type: core.ContentChild, args: ['miniMapNodeTemplate',] }],
+        chart: [{ type: core.ViewChild, args: [ngxCharts.ChartComponent, { read: core.ElementRef, static: true },] }],
         nodeElements: [{ type: core.ViewChildren, args: ['nodeElement',] }],
         linkElements: [{ type: core.ViewChildren, args: ['linkElement',] }],
         groupResultsBy: [{ type: core.Input }],
@@ -2739,7 +2298,10 @@
         onMouseUp: [{ type: core.HostListener, args: ['document:mouseup', ['$event'],] }]
     };
     __decorate([
-        throttleable(500)
+        throttleable(500),
+        __metadata("design:type", Function),
+        __metadata("design:paramtypes", []),
+        __metadata("design:returntype", void 0)
     ], GraphComponent.prototype, "updateMinimap", null);
 
     /**
@@ -2808,8 +2370,8 @@
     }());
     GraphModule.decorators = [
         { type: core.NgModule, args: [{
-                    imports: [common.CommonModule],
-                    declarations: [GraphComponent, MouseWheelDirective, VisibilityObserver],
+                    imports: [ngxCharts.ChartCommonModule],
+                    declarations: [GraphComponent, MouseWheelDirective],
                     exports: [GraphComponent, MouseWheelDirective],
                     providers: [LayoutService]
                 },] }
@@ -2822,7 +2384,7 @@
     }());
     NgxGraphModule.decorators = [
         { type: core.NgModule, args: [{
-                    imports: [common.CommonModule],
+                    imports: [ngxCharts.NgxChartsModule],
                     exports: [GraphModule]
                 },] }
     ];
@@ -2846,11 +2408,10 @@
     exports.NgxGraphModule = NgxGraphModule;
     exports.toD3Node = toD3Node;
     exports.toNode = toNode;
-    exports["ɵa"] = LayoutService;
-    exports["ɵb"] = throttleable;
-    exports["ɵc"] = VisibilityObserver;
+    exports.ɵa = LayoutService;
+    exports.ɵb = throttleable;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=swimlane-ngx-graph.umd.js.map
