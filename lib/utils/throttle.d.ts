@@ -7,7 +7,7 @@
  * @param {*}      [options]
  * @returns
  */
-export declare function throttle(func: any, wait: number, options?: any): () => any;
+export declare function throttle(func: any, wait: number, options?: any): (..._arguments: any[]) => any;
 /**
  * Throttle decorator
  *

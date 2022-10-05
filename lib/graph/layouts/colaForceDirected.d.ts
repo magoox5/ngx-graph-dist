@@ -4,7 +4,7 @@ import { Node } from '../../models/node.model';
 import { ID3StyleLayoutAdaptor, Layout as ColaLayout, Group, InputNode, Link } from 'webcola';
 import { Edge } from '../../models/edge.model';
 import { Observable, Subject } from 'rxjs';
-import { ViewDimensions } from '@swimlane/ngx-charts';
+import { ViewDimensions } from '../../utils/view-dimensions.helper';
 export interface ColaForceDirectedSettings {
     force?: ColaLayout & ID3StyleLayoutAdaptor;
     forceModifierFn?: (force: ColaLayout & ID3StyleLayoutAdaptor) => ColaLayout & ID3StyleLayoutAdaptor;

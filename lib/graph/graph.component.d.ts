@@ -1,5 +1,4 @@
 import { AfterViewInit, ElementRef, EventEmitter, OnDestroy, OnInit, QueryList, TemplateRef, NgZone, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
-import { BaseChartComponent, ColorHelper, ViewDimensions } from '@swimlane/ngx-charts';
 import 'd3-transition';
 import { Observable, Subscription } from 'rxjs';
 import { Layout } from '../models/layout.model';
@@ -9,6 +8,10 @@ import { Node, ClusterNode } from '../models/node.model';
 import { Graph } from '../models/graph.model';
 import { PanningAxis } from '../enums/panning.enum';
 import { MiniMapPosition } from '../enums/mini-map-position.enum';
+import { ColorHelper } from '../utils/color.helper';
+import { ViewDimensions } from '../utils/view-dimensions.helper';
+import { VisibilityObserver } from '../utils/visibility-observer';
+import * as i0 from "@angular/core";
 /**
  * Matrix
  */
@@ -20,12 +23,11 @@ export interface Matrix {
     e: number;
     f: number;
 }
-export declare class GraphComponent extends BaseChartComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
+export declare class GraphComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
     private el;
     zone: NgZone;
     cd: ChangeDetectorRef;
     private layoutService;
-    legend: boolean;
     nodes: Node[];
     clusters: ClusterNode[];
     links: Edge[];
@@ -64,6 +66,11 @@ export declare class GraphComponent extends BaseChartComponent implements OnInit
     miniMapMaxWidth: number;
     miniMapMaxHeight: number;
     miniMapPosition: MiniMapPosition;
+    view: [number, number];
+    scheme: any;
+    customColors: any;
+    animations: boolean;
+    select: EventEmitter<any>;
     activate: EventEmitter<any>;
     deactivate: EventEmitter<any>;
     zoomChange: EventEmitter<number>;
@@ -73,19 +80,16 @@ export declare class GraphComponent extends BaseChartComponent implements OnInit
     clusterTemplate: TemplateRef<any>;
     defsTemplate: TemplateRef<any>;
     miniMapNodeTemplate: TemplateRef<any>;
-    chart: ElementRef;
     nodeElements: QueryList<ElementRef>;
     linkElements: QueryList<ElementRef>;
+    chartWidth: any;
     private isMouseMoveCalled;
     graphSubscription: Subscription;
     subscriptions: Subscription[];
     colors: ColorHelper;
     dims: ViewDimensions;
-    margin: number[];
-    results: any[];
     seriesDomain: any;
     transform: string;
-    legendOptions: any;
     isPanning: boolean;
     isDragging: boolean;
     draggingNode: Node;
@@ -104,6 +108,10 @@ export declare class GraphComponent extends BaseChartComponent implements OnInit
     minimapOffsetY: number;
     isMinimapPanning: boolean;
     minimapClipPathId: string;
+    width: number;
+    height: number;
+    resizeSubscription: any;
+    visibilityObserver: VisibilityObserver;
     constructor(el: ElementRef, zone: NgZone, cd: ChangeDetectorRef, layoutService: LayoutService);
     groupResultsBy: (node: any) => string;
     /**
@@ -291,12 +299,6 @@ export declare class GraphComponent extends BaseChartComponent implements OnInit
      */
     setColors(): void;
     /**
-     * Gets the legend options
-     *
-     * @memberOf GraphComponent
-     */
-    getLegendOptions(): any;
-    /**
      * On mouse move event, used for panning and dragging.
      *
      * @memberOf GraphComponent
@@ -360,4 +362,10 @@ export declare class GraphComponent extends BaseChartComponent implements OnInit
     panToNodeId(nodeId: string): void;
     private panWithConstraints;
     private updateMidpointOnEdge;
+    basicUpdate(): void;
+    getContainerDims(): any;
+    protected unbindEvents(): void;
+    private bindWindowResizeEvent;
+    static ɵfac: i0.ɵɵFactoryDeclaration<GraphComponent, never>;
+    static ɵcmp: i0.ɵɵComponentDeclaration<GraphComponent, "ngx-graph", never, { "nodes": "nodes"; "clusters": "clusters"; "links": "links"; "activeEntries": "activeEntries"; "curve": "curve"; "draggingEnabled": "draggingEnabled"; "nodeHeight": "nodeHeight"; "nodeMaxHeight": "nodeMaxHeight"; "nodeMinHeight": "nodeMinHeight"; "nodeWidth": "nodeWidth"; "nodeMinWidth": "nodeMinWidth"; "nodeMaxWidth": "nodeMaxWidth"; "panningEnabled": "panningEnabled"; "panningAxis": "panningAxis"; "enableZoom": "enableZoom"; "zoomSpeed": "zoomSpeed"; "minZoomLevel": "minZoomLevel"; "maxZoomLevel": "maxZoomLevel"; "autoZoom": "autoZoom"; "panOnZoom": "panOnZoom"; "animate": "animate"; "autoCenter": "autoCenter"; "zoomToFitMargin": "zoomToFitMargin"; "update$": "update$"; "center$": "center$"; "zoomToFit$": "zoomToFit$"; "panToNode$": "panToNode$"; "layout": "layout"; "layoutSettings": "layoutSettings"; "enableTrackpadSupport": "enableTrackpadSupport"; "showMiniMap": "showMiniMap"; "miniMapMaxWidth": "miniMapMaxWidth"; "miniMapMaxHeight": "miniMapMaxHeight"; "miniMapPosition": "miniMapPosition"; "view": "view"; "scheme": "scheme"; "customColors": "customColors"; "animations": "animations"; "groupResultsBy": "groupResultsBy"; "zoomLevel": "zoomLevel"; "panOffsetX": "panOffsetX"; "panOffsetY": "panOffsetY"; }, { "select": "select"; "activate": "activate"; "deactivate": "deactivate"; "zoomChange": "zoomChange"; "clickHandler": "clickHandler"; }, ["linkTemplate", "nodeTemplate", "clusterTemplate", "defsTemplate", "miniMapNodeTemplate"], ["*"], false>;
 }
